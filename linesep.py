@@ -1,3 +1,5 @@
+import re
+
 def read_begun(fp, sep, retain=True, size=512):
     # Omits empty leading entry
     entries = read_separated(fp, sep, size=size)
@@ -10,16 +12,8 @@ def read_begun(fp, sep, retain=True, size=512):
         yield e
 
 def read_separated(fp, sep, size=512):
-    buff = ''
-    for chunk in iter(lambda: fp.read(size), ''):
-        buff += chunk
-        lines = buff.split(sep)
-        buff = lines.pop()
-        for l in lines:
-            yield l
-    yield buff
-
-def read_separated_re(fp, sep, size=512):
+    if not isinstance(sep, re.RegexObject):
+        sep = re.compile(re.escape(sep))
     buff = ''
     for chunk in iter(lambda: fp.read(size), ''):
         buff += chunk
