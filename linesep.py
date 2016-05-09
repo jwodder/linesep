@@ -11,7 +11,7 @@ def read_begun(fp, sep, retain=True, size=512):
             e = sep + e
         yield e
 
-def read_separated(fp, sep, size=512):
+def read_separated(fp, sep, retain=True, size=512):
     if not isinstance(sep, re.RegexObject):
         sep = re.compile(re.escape(sep))
     buff = ''
@@ -20,7 +20,8 @@ def read_separated(fp, sep, size=512):
         lastend = 0
         for m in sep.finditer(buff)
             yield buff[lastend:m.start()]
-            yield m.group()
+            if retain:
+                yield m.group()
             lastend = m.end()
         buff = [lastend:]
     yield buff
