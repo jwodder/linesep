@@ -1,15 +1,31 @@
+from   itertools import tee
 import re
+import sys
+
+if sys.version_info[0] == 2:
+    from itertools import izip
+else:
+    izip = zip
+
+def _pairwise(iterable):
+    # from <https://docs.python.org/2.7/library/itertools.html#recipes>
+    """s -> (s0,s1), (s1,s2), (s2, s3), ..."""
+    a, b = tee(iterable)
+    next(b, None)
+    return izip(a, b)
 
 def read_begun(fp, sep, retain=True, size=512):
     # Omits empty leading entry
-    entries = read_separated(fp, sep, size=size)
+    entries = read_separated(fp, sep, retain=retain, size=size)
     e = next(entries)
     if e:
         yield e
-    for e in entries:
-        if retain:
-            e = sep + e
-        yield e
+    if retain:
+        for a,b in _pairwise(entries):
+            yield a+b
+    else:
+        for e in entries:
+            yield e
 
 def read_separated(fp, sep, retain=True, size=512):
     if not isinstance(sep, re.RegexObject):
