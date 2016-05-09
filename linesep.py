@@ -29,12 +29,12 @@ def read_separated(fp, sep, retain=True, size=512):
     for chunk in iter(lambda: fp.read(size), ''):
         buff += chunk
         lastend = 0
-        for m in sep.finditer(buff)
+        for m in sep.finditer(buff):
             yield buff[lastend:m.start()]
             if retain:
                 yield m.group()
             lastend = m.end()
-        buff = [lastend:]
+        buff = buff[lastend:]
     yield buff
 
 def read_terminated(fp, sep, retain=True, size=512):
