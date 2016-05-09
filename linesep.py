@@ -19,6 +19,18 @@ def read_separated(fp, sep, size=512):
             yield l
     yield buff
 
+def read_separated_re(fp, sep, size=512):
+    buff = ''
+    for chunk in iter(lambda: fp.read(size), ''):
+        buff += chunk
+        lastend = 0
+        for m in sep.finditer(buff)
+            yield buff[lastend:m.start()]
+            yield m.group()
+            lastend = m.end()
+        buff = [lastend:]
+    yield buff
+
 def read_terminated(fp, sep, retain=True, size=512):
     # Omits empty trailing entry
     buff = ''
