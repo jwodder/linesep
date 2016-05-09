@@ -11,7 +11,7 @@ def join_pairs(iterable):
         else:
             yield a + b
 
-def read_begun(fp, sep, retain=True, size=512):
+def read_preceded(fp, sep, retain=True, size=512):
     # Omits empty leading entry
     entries = read_separated(fp, sep, retain=retain, size=size)
     e = next(entries)
