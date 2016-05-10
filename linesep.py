@@ -1,16 +1,5 @@
 import re
 
-def join_pairs(iterable):
-    while True:
-        a = next(iterable)
-        try:
-            b = next(iterable)
-        except StopIteration:
-            yield a
-            return
-        else:
-            yield a + b
-
 def read_preceded(fp, sep, retain=True, size=512):
     """
     Read from a file-like object ``fp`` containing entries starting
@@ -35,7 +24,7 @@ def read_preceded(fp, sep, retain=True, size=512):
     if e:
         yield e
     if retain:
-        entries = join_pairs(entries)
+        entries = _join_pairs(entries)
     for e in entries:
         yield e
 
@@ -92,10 +81,26 @@ def read_terminated(fp, sep, retain=True, size=512):
     prev = None
     entries = read_separated(fp, sep, retain=retain, size=size)
     if retain:
-        entries = join_pairs(entries)
+        entries = _join_pairs(entries)
     for e in entries:
         if prev is not None:
             yield prev
         prev = e
     if prev:
         yield prev
+
+def _join_pairs(iterable):
+    """
+    Concatenate each pair of consecutive strings in ``iterable``.  If there are
+    an odd number of items in ``iterable``, the last one will be returned
+    unmodified.
+    """
+    while True:
+        a = next(iterable)
+        try:
+            b = next(iterable)
+        except StopIteration:
+            yield a
+            return
+        else:
+            yield a + b
