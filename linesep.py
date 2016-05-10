@@ -12,6 +12,23 @@ def join_pairs(iterable):
             yield a + b
 
 def read_preceded(fp, sep, retain=True, size=512):
+    """
+    Read from a file-like object ``fp`` containing entries starting
+    with/preceded by the string or compiled regex ``sep`` and return a
+    generator of the entries.  An empty file will always produce an empty
+    generator.
+
+    If ``retain`` is `True`, each entry (except possibly the first) will have
+    its leading delimiter prepended to it.  If ``sep`` is a compiled regex, the
+    delimiter will be the string matched by the regex at that point; any
+    capturing subgroups will be ignored.
+
+    If ``retain`` is `False`, leading delimiters will not be present in the
+    output entries.
+
+    ``size`` specifies how many bytes or characters to read from ``fp`` at a
+    time.
+    """
     # Omits empty leading entry
     entries = read_separated(fp, sep, retain=retain, size=size)
     e = next(entries)
@@ -55,6 +72,22 @@ def read_separated(fp, sep, retain=True, size=512):
     yield buff
 
 def read_terminated(fp, sep, retain=True, size=512):
+    """
+    Read from a file-like object ``fp`` containing entries terminated by the
+    string or compiled regex ``sep`` and return a generator of the entries.  An
+    empty file will always produce an empty generator.
+
+    If ``retain`` is `True`, each entry (except possibly the last) will have
+    its terminator appended to it.  If ``sep`` is a compiled regex, the
+    terminator will be the string matched by the regex at that point; any
+    capturing subgroups will be ignored.
+
+    If ``retain`` is `False`, terminators will not be present in the output
+    entries.
+
+    ``size`` specifies how many bytes or characters to read from ``fp`` at a
+    time.
+    """
     # Omits empty trailing entry
     prev = None
     entries = read_separated(fp, sep, retain=retain, size=size)
