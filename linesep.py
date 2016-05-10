@@ -23,6 +23,23 @@ def read_preceded(fp, sep, retain=True, size=512):
         yield e
 
 def read_separated(fp, sep, retain=True, size=512):
+    """
+    Read from a file-like object ``fp`` containing entries separated by the
+    string or compiled regex ``sep`` and return a generator of the entries.  An
+    empty file will always produce a generator with one element, the empty
+    string.
+
+    If ``retain`` is `True`, the separators will be included in the output: the
+    generator will contain an odd number of elements, alternating between
+    entries and separators, starting with a (possibly empty) entry.  If ``sep``
+    is a compiled regex, the separator elements will be the strings matched by
+    the regex; any capturing subgroups will be ignored.
+
+    If ``retain`` is `False`, separators will not be present in the output.
+
+    ``size`` specifies how many bytes or characters to read from ``fp`` at a
+    time.
+    """
     if not isinstance(sep, re.RegexObject):
         sep = re.compile(re.escape(sep))
     buff = ''
