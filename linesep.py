@@ -1,3 +1,31 @@
+"""
+Functions for reading a file or file-like object as a series of entries
+delimited by a given string or regex.  Each function returns a generator of the
+entries, optionally with the delimiters included.  The file-like object may
+produce either bytes or characters; the type of the separator should match, and
+the same type will be returned.
+
+The three functions differ in how a delimiter immediately at the beginning or
+end of the file is treated, as well as in how retained delimiters are returned:
+
+``read_preceded`` is for delimiters that mark the beginning of an entry; when
+retained, the delimiters are placed at the beginning of each entry (except
+possibly the first).  A delimiter at the beginning of a file does not produce
+an entry for the empty string before it, and a delimiter at the end of a file
+indicates an empty entry.
+
+``read_separated`` is for delimiters that separate one entry from another; when
+retained, the delimiters are included in the returned generator as separate
+elements.  A delimiter at the start or end of a file produces an entry for the
+empty string before or after it.
+
+``read_terminated`` is for delimiters that mark the end of an entry; when
+retained, the delimiters are placed at the end of each entry (except possibly
+the last).  A delimiter at the start of a file indicates an empty entry, and a
+delimiter at the end of a file does not produce an entry for the empty string
+after it.
+"""
+
 import re
 
 def read_preceded(fp, sep, retain=True, size=512):
