@@ -26,6 +26,12 @@ delimiter at the end of a file does not produce an entry for the empty string
 after it.
 """
 
+__version__      = '1.0.0'
+__author__       = 'John Thorvald Wodder II'
+__author_email__ = 'linesep@varonathe.org'
+__license__      = 'MIT'
+__url__          = 'https://github.com/jwodder/linesep'
+
 import re
 
 def read_preceded(fp, sep, retain=True, size=512):
