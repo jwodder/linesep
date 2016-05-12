@@ -5,7 +5,7 @@ treated, as well as in how retained delimiters are returned.
 
 ::
 
-    read_preceded(fp, sep, retain=True, size=512)
+    read_preceded(fp, sep, retain=False, size=512)
 
 ``read_preceded`` is for delimiters that mark the beginning of an entry; when
 retained, the delimiters are prepended to the beginning of each entry (except
@@ -15,7 +15,7 @@ indicates an empty entry.
 
 ::
 
-    read_separated(fp, sep, retain=True, size=512)
+    read_separated(fp, sep, retain=False, size=512)
 
 ``read_separated`` is for delimiters that separate one entry from another; when
 retained, the delimiters are included in the returned generator as separate
@@ -24,7 +24,7 @@ empty string before or after it.
 
 ::
 
-    read_terminated(fp, sep, retain=True, size=512)
+    read_terminated(fp, sep, retain=False, size=512)
 
 ``read_terminated`` is for delimiters that mark the end of an entry; when
 retained, the delimiters are appended to the end of each entry (except possibly
@@ -45,7 +45,7 @@ Each function takes the following arguments:
     entries
 
 ``retain``
-    Whether to include the delimiters in the output; default value: ``True``
+    Whether to include the delimiters in the output; default value: ``False``
 
 ``size``
     How many bytes or characters to read from ``fp`` at a time; default value:
@@ -67,12 +67,12 @@ Parsing output from ``find -print0``::
 
     find = subprocess.Popen(['find', '/', '-some', '-complicated', '-condition',
                                      '-print0'], stdout=subprocess.PIPE)
-    for filepath in linesep.read_terminated(find.stdout, '\0', retain=False):
+    for filepath in linesep.read_terminated(find.stdout, '\0'):
         ...
 
 A poor man's JSON Sequence parser::
 
-    for entry in linesep.read_preceded(fp, '\x1E', retain=False):
+    for entry in linesep.read_preceded(fp, '\x1E'):
         try:
             obj = json.loads(entry)
         except ValueError:

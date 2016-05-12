@@ -34,7 +34,7 @@ __url__          = 'https://github.com/jwodder/linesep'
 
 import re
 
-def read_preceded(fp, sep, retain=True, size=512):
+def read_preceded(fp, sep, retain=False, size=512):
     """
     Read from a file-like object ``fp`` containing entries starting
     with/preceded by the string or compiled regex ``sep`` and return a
@@ -62,7 +62,7 @@ def read_preceded(fp, sep, retain=True, size=512):
     for e in entries:
         yield e
 
-def read_separated(fp, sep, retain=True, size=512):
+def read_separated(fp, sep, retain=False, size=512):
     """
     Read from a file-like object ``fp`` containing entries separated by the
     string or compiled regex ``sep`` and return a generator of the entries.  An
@@ -95,7 +95,7 @@ def read_separated(fp, sep, retain=True, size=512):
         buff = buff[lastend:]
     yield buff
 
-def read_terminated(fp, sep, retain=True, size=512):
+def read_terminated(fp, sep, retain=False, size=512):
     """
     Read from a file-like object ``fp`` containing entries terminated by the
     string or compiled regex ``sep`` and return a generator of the entries.  An
