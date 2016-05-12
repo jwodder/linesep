@@ -17,7 +17,7 @@ with open(join(dirname(__file__), 'README.rst')) as fp:
 setup(
     name='linesep',
     version=version,
-    packages=['linesep'],
+    py_modules=['linesep'],
     license='MIT',
     author='John Thorvald Wodder II',
     author_email='linesep@varonathe.org',
