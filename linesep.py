@@ -80,7 +80,8 @@ def read_separated(fp, sep, retain=True, size=512):
     ``size`` specifies how many bytes or characters to read from ``fp`` at a
     time.
     """
-    if not isinstance(sep, re.RegexObject):
+    # http://stackoverflow.com/a/7054512/744178
+    if not hasattr(sep, 'match'):
         sep = re.compile(re.escape(sep))
     buff = ''
     for chunk in iter(lambda: fp.read(size), ''):
