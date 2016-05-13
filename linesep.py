@@ -26,7 +26,7 @@ delimiter at the end of a file does not produce an entry for the empty string
 after it.
 """
 
-__version__      = '1.0.0'
+__version__      = '0.1.0.dev1'
 __author__       = 'John Thorvald Wodder II'
 __author_email__ = 'linesep@varonathe.org'
 __license__      = 'MIT'
