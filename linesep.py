@@ -124,6 +124,36 @@ def read_terminated(fp, sep, retain=False, size=512):
     if prev:
         yield prev
 
+def split_preceded(s, sep, retain=False):
+    entries = split_separated(s, sep, retain)
+    if retain:
+        entries[1:] = list(_join_pairs(entries[1:]))
+    if entries[0] == '':
+        entries.pop(0)
+    return entries
+
+def split_separated(s, sep, retain=False):
+    # http://stackoverflow.com/a/7054512/744178
+    if not hasattr(sep, 'match'):
+        sep = re.compile(re.escape(sep))
+    entries = []
+    lastend = 0
+    for m in sep.finditer(s):
+        entries.append(s[lastend:m.start()])
+        if retain:
+            entries.append(m.group())
+        lastend = m.end()
+    entries.append(s[lastend:])
+    return entries
+
+def split_terminated(s, sep, retain=False):
+    entries = split_separated(s, sep, retain)
+    if retain:
+        entries = list(_join_pairs(entries))
+    if entries[-1] == '':
+        entries.pop()
+    return entries
+
 def _join_pairs(iterable):
     """
     Concatenate each pair of consecutive strings in ``iterable``.  If there are
