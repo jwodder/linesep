@@ -1,9 +1,8 @@
-import sys
 import linesep
 
-if sys.version_info[0] == 2:
+try:
     from StringIO import StringIO
-else:
+except ImportError:
     from io       import BytesIO as StringIO
 
 def test_terminated_empty():
