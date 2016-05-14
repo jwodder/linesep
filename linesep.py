@@ -199,10 +199,11 @@ def _join_pairs(iterable):
     an odd number of items in ``iterable``, the last one will be returned
     unmodified.
     """
+    i = iter(iterable)
     while True:
-        a = next(iterable)
+        a = next(i)
         try:
-            b = next(iterable)
+            b = next(i)
         except StopIteration:
             yield a
             return
