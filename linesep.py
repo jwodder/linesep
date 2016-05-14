@@ -125,6 +125,19 @@ def read_terminated(fp, sep, retain=False, size=512):
         yield prev
 
 def split_preceded(s, sep, retain=False):
+    """
+    Split a string ``s`` into zero or more entries starting with/preceded by
+    the string or compiled regex ``sep`` and return a list of the entries.  An
+    empty string will always produce an empty list.
+
+    If ``retain`` is `True`, each entry (except possibly the first) will have
+    its leading delimiter prepended to it.  If ``sep`` is a compiled regex, the
+    delimiter will be the string matched by the regex at that point; any
+    capturing subgroups will be ignored.
+
+    If ``retain`` is `False`, leading delimiters will not be present in the
+    output entries.
+    """
     entries = split_separated(s, sep, retain)
     if retain:
         entries[1:] = list(_join_pairs(entries[1:]))
@@ -133,6 +146,19 @@ def split_preceded(s, sep, retain=False):
     return entries
 
 def split_separated(s, sep, retain=False):
+    """
+    Split a string ``s`` into one or more entries separated by the string or
+    compiled regex ``sep`` and return a list of the entries.  An empty string
+    will always produce a list with one element, the empty string.
+
+    If ``retain`` is `True`, the separators will be included in the output: the
+    list will contain an odd number of elements, alternating between entries
+    and separators, starting with a (possibly empty) entry.  If ``sep`` is a
+    compiled regex, the separator elements will be the strings matched by the
+    regex; any capturing subgroups will be ignored.
+
+    If ``retain`` is `False`, separators will not be present in the output.
+    """
     # http://stackoverflow.com/a/7054512/744178
     if not hasattr(sep, 'match'):
         sep = re.compile(re.escape(sep))
@@ -147,6 +173,19 @@ def split_separated(s, sep, retain=False):
     return entries
 
 def split_terminated(s, sep, retain=False):
+    """
+    Split a string ``s`` into zero or more entries terminated by the string or
+    compiled regex ``sep`` and return a list of the entries.  An empty string
+    will always produce an empty list.
+
+    If ``retain`` is `True`, each entry (except possibly the last) will have
+    its terminator appended to it.  If ``sep`` is a compiled regex, the
+    terminator will be the string matched by the regex at that point; any
+    capturing subgroups will be ignored.
+
+    If ``retain`` is `False`, terminators will not be present in the output
+    entries.
+    """
     entries = split_separated(s, sep, retain)
     if retain:
         entries = list(_join_pairs(entries))
