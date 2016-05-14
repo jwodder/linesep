@@ -50,6 +50,17 @@ scenarios = [
         "terminated_retained": ['foo\n', 'bar']
     }),
 
+    ('sep_text_sep', {
+        "text": '\nfoo\n',
+        "sep": '\n',
+        "preceded": ['foo', ''],
+        "preceded_retained": ["\nfoo", "\n"],
+        "separated": ['', 'foo', ''],
+        "separated_retained": ['', '\n', 'foo', '\n', ''],
+        "terminated": ['', 'foo'],
+        "terminated_retained": ['\n', 'foo\n'],
+    }),
+
 ]
 
 def test_split_preceded(text, sep, preceded, **_):
