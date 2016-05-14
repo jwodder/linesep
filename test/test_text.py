@@ -16,6 +16,7 @@ def pytest_generate_tests(metafunc):
     metafunc.parametrize(metafunc.fixturenames, argvalues, ids=idlist, scope="module")
 
 scenarios = [
+
     ('empty', {
         "text": '',
         "sep": '\n',
@@ -26,6 +27,7 @@ scenarios = [
         "terminated_retained": [],
         "separated_retained": [''],
     }),
+
     ('one_sep', {
         "text": '\n',
         "sep": '\n',
@@ -36,6 +38,18 @@ scenarios = [
         "terminated_retained": ['\n'],
         "separated_retained": ['', '\n', ''],
     }),
+
+    ('text_sep_text', {
+        "text": 'foo\nbar',
+        "sep": '\n',
+        "preceded": ['foo', 'bar'],
+        "preceded_retained": ['foo', '\nbar'],
+        "separated": ['foo', 'bar'],
+        "separated_retained": ['foo', '\n', 'bar'],
+        "terminated": ['foo', 'bar'],
+        "terminated_retained": ['foo\n', 'bar']
+    }),
+
 ]
 
 def test_split_preceded(text, sep, preceded, **_):
