@@ -193,6 +193,34 @@ def split_terminated(s, sep, retain=False):
         entries.pop()
     return entries
 
+def join_preceded(iterable, sep):
+    return ''.join(sep + s for s in iterable)
+
+def join_separated(iterable, sep):
+    return sep.join(iterable)
+
+def join_terminated(iterable, sep):
+    return ''.join(s + sep for s in iterable)
+
+def write_preceded(fp, iterable, sep):
+    for s in iterable:
+        fp.write(sep)
+        fp.write(s)
+
+def write_separated(fp, iterable, sep):
+    first = True
+    for s in iterable:
+        if first:
+            first = False
+        else:
+            fp.write(sep)
+        fp.write(s)
+
+def write_terminated(fp, iterable, sep):
+    for s in iterable:
+        fp.write(s)
+        fp.write(sep)
+
 def _join_pairs(iterable):
     """
     Concatenate each pair of consecutive strings in ``iterable``.  If there are
