@@ -194,13 +194,13 @@ def split_terminated(s, sep, retain=False):
     return entries
 
 def join_preceded(iterable, sep):
-    return ''.join(sep + s for s in iterable)
+    return sep[0:0].join(sep + s for s in iterable)
 
 def join_separated(iterable, sep):
     return sep.join(iterable)
 
 def join_terminated(iterable, sep):
-    return ''.join(s + sep for s in iterable)
+    return sep[0:0].join(s + sep for s in iterable)
 
 def write_preceded(fp, iterable, sep):
     for s in iterable:
