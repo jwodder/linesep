@@ -194,20 +194,40 @@ def split_terminated(s, sep, retain=False):
     return entries
 
 def join_preceded(iterable, sep):
+    """
+    Join the elements of ``iterable`` (which must all be strings) together,
+    preceding each one with ``sep``
+    """
     return sep[0:0].join(sep + s for s in iterable)
 
 def join_separated(iterable, sep):
+    """
+    Join the elements of ``iterable`` (which must all be strings) together,
+    separating consecutive elements with ``sep``
+    """
     return sep.join(iterable)
 
 def join_terminated(iterable, sep):
+    """
+    Join the elements of ``iterable`` (which must all be strings) together,
+    terminating each one with ``sep``
+    """
     return sep[0:0].join(s + sep for s in iterable)
 
 def write_preceded(fp, iterable, sep):
+    """
+    Write the elements of ``iterable`` (which must all be strings) to ``fp``,
+    preceding each one with ``sep``
+    """
     for s in iterable:
         fp.write(sep)
         fp.write(s)
 
 def write_separated(fp, iterable, sep):
+    """
+    Write the elements of ``iterable`` (which must all be strings) to ``fp``,
+    separating consecutive elements with ``sep``
+    """
     first = True
     for s in iterable:
         if first:
@@ -217,6 +237,10 @@ def write_separated(fp, iterable, sep):
         fp.write(s)
 
 def write_terminated(fp, iterable, sep):
+    """
+    Write the elements of ``iterable`` (which must all be strings) to ``fp``,
+    terminating each one with ``sep``
+    """
     for s in iterable:
         fp.write(s)
         fp.write(sep)
