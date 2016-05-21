@@ -1,3 +1,14 @@
+.. |repostatus| image:: http://www.repostatus.org/badges/latest/wip.svg
+    :target: http://www.repostatus.org/#wip
+    :alt: Project Status: WIP – Initial development is in progress, but there
+          has not yet been a stable, usable release suitable for the public.
+
+.. |license| image:: https://img.shields.io/github/license/jwodder/linesep.svg
+    :target: https://opensource.org/licenses/MIT
+    :alt: MIT License
+
+|repostatus| |license|
+
 This module provides functions for reading a file or file-like object as a
 series of entries delimited by a given string or regex.  The three functions
 differ in how a delimiter immediately at the beginning or end of the file is
