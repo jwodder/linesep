@@ -62,38 +62,38 @@ scenarios = [
 
 ]
 
-def test_split_preceded(text, sep, preceded, **_):
+def test_split_preceded(text, sep, preceded):
     assert linesep.split_preceded(text, sep, retain=False) == preceded
 
-def test_split_terminated(text, sep, terminated, **_):
+def test_split_terminated(text, sep, terminated):
     assert linesep.split_terminated(text, sep, retain=False) == terminated
 
-def test_split_separated(text, sep, separated, **_):
+def test_split_separated(text, sep, separated):
     assert linesep.split_separated(text, sep, retain=False) == separated
 
-def test_split_preceded_retained(text, sep, preceded_retained, **_):
+def test_split_preceded_retained(text, sep, preceded_retained):
     assert linesep.split_preceded(text, sep, retain=True) == preceded_retained
 
-def test_split_terminated_retained(text, sep, terminated_retained, **_):
+def test_split_terminated_retained(text, sep, terminated_retained):
     assert linesep.split_terminated(text, sep, retain=True) == terminated_retained
 
-def test_split_separated_retained(text, sep, separated_retained, **_):
+def test_split_separated_retained(text, sep, separated_retained):
     assert linesep.split_separated(text, sep, retain=True) == separated_retained
 
-def test_read_preceded(text, sep, preceded, **_):
+def test_read_preceded(text, sep, preceded):
     assert list(linesep.read_preceded(BytesIO(text), sep, retain=False)) == preceded
 
-def test_read_terminated(text, sep, terminated, **_):
+def test_read_terminated(text, sep, terminated):
     assert list(linesep.read_terminated(BytesIO(text), sep, retain=False)) == terminated
 
-def test_read_separated(text, sep, separated, **_):
+def test_read_separated(text, sep, separated):
     assert list(linesep.read_separated(BytesIO(text), sep, retain=False)) == separated
 
-def test_read_preceded_retained(text, sep, preceded_retained, **_):
+def test_read_preceded_retained(text, sep, preceded_retained):
     assert list(linesep.read_preceded(BytesIO(text), sep, retain=True)) == preceded_retained
 
-def test_read_terminated_retained(text, sep, terminated_retained, **_):
+def test_read_terminated_retained(text, sep, terminated_retained):
     assert list(linesep.read_terminated(BytesIO(text), sep, retain=True)) == terminated_retained
 
-def test_read_separated_retained(text, sep, separated_retained, **_):
+def test_read_separated_retained(text, sep, separated_retained):
     assert list(linesep.read_separated(BytesIO(text), sep, retain=True)) == separated_retained
