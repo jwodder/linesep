@@ -83,8 +83,9 @@ def read_separated(fp, sep, retain=False, size=512):
     # http://stackoverflow.com/a/7054512/744178
     if not hasattr(sep, 'match'):
         sep = re.compile(re.escape(sep))
-    buff = ''
-    for chunk in iter(lambda: fp.read(size), ''):
+    empty = fp.read(0)  # b'' or u'' as appropriate
+    buff = empty
+    for chunk in iter(lambda: fp.read(size), empty):
         buff += chunk
         lastend = 0
         for m in sep.finditer(buff):
@@ -141,7 +142,7 @@ def split_preceded(s, sep, retain=False):
     entries = split_separated(s, sep, retain)
     if retain:
         entries[1:] = list(_join_pairs(entries[1:]))
-    if entries[0] == '':
+    if not entries[0]:
         entries.pop(0)
     return entries
 
@@ -189,7 +190,7 @@ def split_terminated(s, sep, retain=False):
     entries = split_separated(s, sep, retain)
     if retain:
         entries = list(_join_pairs(entries))
-    if entries[-1] == '':
+    if not entries[-1]:
         entries.pop()
     return entries
 
