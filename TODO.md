@@ -10,6 +10,5 @@
       read the files piecemeal rather than reading them entirely into memory
 - Write tests
     - Test `write_*` and `join_*`
-    - Test bytes
     - Search "data-driven testing"?
 - Upload to PyPI
