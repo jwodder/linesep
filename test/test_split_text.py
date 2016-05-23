@@ -1,4 +1,5 @@
 from   __future__ import unicode_literals
+import re
 import linesep
 
 try:
@@ -59,6 +60,28 @@ scenarios = [
         "separated_retained": ['', '\n', 'foo', '\n', ''],
         "terminated": ['', 'foo'],
         "terminated_retained": ['\n', 'foo\n'],
+    }),
+
+    ('regex01', {
+        "text": 'abca|bc',
+        "sep": re.compile(r'a|b'),
+        "preceded": ['', 'c', '|', 'c'],
+        "preceded_retained": ['a', 'bc', 'a|', 'bc'],
+        "separated": ['', '', 'c', '|', 'c'],
+        "separated_retained": ['', 'a', '', 'b', 'c', 'a', '|', 'b', 'c'],
+        "terminated": ['', '', 'c', '|', 'c'],
+        "terminated_retained": ['a', 'b', 'ca', '|b', 'c'],
+    }),
+
+    ('regex_literal', {
+        "text": 'abca|bc',
+        "sep": 'a|b',
+        "preceded": ['abc', 'c'],
+        "preceded_retained": ['abc', 'a|bc'],
+        "separated": ['abc', 'c'],
+        "separated_retained": ['abc', 'a|b', 'c'],
+        "terminated": ['abc', 'c'],
+        "terminated_retained": ['abca|b', 'c'],
     }),
 
 ]

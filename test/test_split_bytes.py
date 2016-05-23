@@ -1,3 +1,4 @@
+import re
 import linesep
 
 try:
@@ -58,6 +59,28 @@ scenarios = [
         "separated_retained": [b'', b'\n', b'foo', b'\n', b''],
         "terminated": [b'', b'foo'],
         "terminated_retained": [b'\n', b'foo\n'],
+    }),
+
+    ('regex01', {
+        "text": b'abca|bc',
+        "sep": re.compile(br'a|b'),
+        "preceded": [b'', b'c', b'|', b'c'],
+        "preceded_retained": [b'a', b'bc', b'a|', b'bc'],
+        "separated": [b'', b'', b'c', b'|', b'c'],
+        "separated_retained": [b'', b'a', b'', b'b', b'c', b'a', b'|', b'b', b'c'],
+        "terminated": [b'', b'', b'c', b'|', b'c'],
+        "terminated_retained": [b'a', b'b', b'ca', b'|b', b'c'],
+    }),
+
+    ('regex_literal', {
+        "text": b'abca|bc',
+        "sep": b'a|b',
+        "preceded": [b'abc', b'c'],
+        "preceded_retained": [b'abc', b'a|bc'],
+        "separated": [b'abc', b'c'],
+        "separated_retained": [b'abc', b'a|b', b'c'],
+        "terminated": [b'abc', b'c'],
+        "terminated_retained": [b'abca|b', b'c'],
     }),
 
 ]
