@@ -3,11 +3,14 @@
     :alt: Project Status: WIP – Initial development is in progress, but there
           has not yet been a stable, usable release suitable for the public.
 
+.. |travis| image:: https://travis-ci.org/jwodder/linesep.svg?branch=master
+    :target: https://travis-ci.org/jwodder/linesep
+
 .. |license| image:: https://img.shields.io/github/license/jwodder/linesep.svg
     :target: https://opensource.org/licenses/MIT
     :alt: MIT License
 
-|repostatus| |license|
+|repostatus| |travis| |license|
 
 This module provides functions for reading a file or file-like object as a
 series of entries delimited by a given string or regex.  The three functions
