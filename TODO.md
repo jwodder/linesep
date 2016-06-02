@@ -8,7 +8,5 @@
 
     - Point out in the README (and docstrings?) that the `read_*` functions
       read the files piecemeal rather than reading them entirely into memory
-- Write tests
-    - Test `write_*` and `join_*`
-    - Search "data-driven testing"?
+- Write more tests
 - Upload to PyPI

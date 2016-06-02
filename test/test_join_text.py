@@ -34,6 +34,22 @@ scenarios = [
         "separated": '',
     }),
 
+    ('nonempty', {
+        "entries": ['foo'],
+        "sep": '\n',
+        "preceded": '\nfoo',
+        "terminated": 'foo\n',
+        "separated": 'foo',
+    }),
+
+    ('two_nonempty', {
+        "entries": ['foo', 'bar'],
+        "sep": '\n',
+        "preceded": '\nfoo\nbar',
+        "terminated": 'foo\nbar\n',
+        "separated": 'foo\nbar',
+    }),
+
 ]
 
 def test_join_preceded(entries, sep, preceded):
