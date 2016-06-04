@@ -94,6 +94,17 @@ scenarios = [
         "terminated_retained": [b'abca|b', b'c'],
     }),
 
+    ('regex_groups', {
+        "text": b'abca|bc',
+        "sep": re.compile(br'(a)|(b)'),
+        "preceded": [b'', b'c', b'|', b'c'],
+        "preceded_retained": [b'a', b'bc', b'a|', b'bc'],
+        "separated": [b'', b'', b'c', b'|', b'c'],
+        "separated_retained": [b'', b'a', b'', b'b', b'c', b'a', b'|', b'b', b'c'],
+        "terminated": [b'', b'', b'c', b'|', b'c'],
+        "terminated_retained": [b'a', b'b', b'ca', b'|b', b'c'],
+    }),
+
 ]
 
 def test_split_preceded(text, sep, preceded):
