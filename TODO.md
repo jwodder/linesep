@@ -10,3 +10,5 @@
       read the files piecemeal rather than reading them entirely into memory
 - Write more tests
 - Upload to PyPI
+- For next version: Give the `read_*` functions arguments for only accepting
+  regex matches with certain buffers/surroundings?
