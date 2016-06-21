@@ -28,6 +28,17 @@ scenarios = [
         "separated_retained": [b''],
     }),
 
+    ('no_sep', {
+        "text": b'foo',
+        "sep": b'\n',
+        "preceded": [b'foo'],
+        "terminated": [b'foo'],
+        "separated": [b'foo'],
+        "preceded_retained": [b'foo'],
+        "terminated_retained": [b'foo'],
+        "separated_retained": [b'foo'],
+    }),
+
     ('one_sep', {
         "text": b'\n',
         "sep": b'\n',
