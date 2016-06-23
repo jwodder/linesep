@@ -62,6 +62,17 @@ scenarios = [
         "separated_retained": ['', '\n', '', '\n', ''],
     }),
 
+    ('text_sep', {
+        "text": 'foo\n',
+        "sep": '\n',
+        "preceded": ['foo', ''],
+        "preceded_retained": ['foo', '\n'],
+        "separated": ['foo', ''],
+        "separated_retained": ['foo', '\n', ''],
+        "terminated": ['foo'],
+        "terminated_retained": ['foo\n']
+    }),
+
     ('text_sep_text', {
         "text": 'foo\nbar',
         "sep": '\n',
