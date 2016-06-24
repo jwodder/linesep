@@ -72,6 +72,17 @@ scenarios = [
         "terminated_retained": [b'foo\n']
     }),
 
+    ('sep_text', {
+        "text": b'\nfoo',
+        "sep": b'\n',
+        "preceded": [b'foo'],
+        "preceded_retained": [b'\nfoo'],
+        "separated": [b'', b'foo'],
+        "separated_retained": [b'', b'\n', b'foo'],
+        "terminated": [b'', b'foo'],
+        "terminated_retained": [b'\n', b'foo']
+    }),
+
     ('text_sep_text', {
         "text": b'foo\nbar',
         "sep": b'\n',
