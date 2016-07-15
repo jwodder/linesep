@@ -116,6 +116,17 @@ scenarios = [
         "terminated_retained": [b'\n', b'\n', b'foo'],
     }),
 
+    ('text_sep_sep', {
+        "text": b'foo\n\n',
+        "sep": b'\n',
+        "preceded": [b'foo', b'', b''],
+        "preceded_retained": [b'foo', b'\n', b'\n'],
+        "separated": [b'foo', b'', b''],
+        "separated_retained": [b'foo', b'\n', b'', b'\n', b''],
+        "terminated": [b'foo', b''],
+        "terminated_retained": [b'foo\n', b'\n'],
+    }),
+
     ('regex01', {
         "text": b'abca|bc',
         "sep": re.compile(br'a|b'),

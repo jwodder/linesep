@@ -9,6 +9,7 @@
     - Point out in the README (and docstrings?) that the `read_*` functions
       read the files piecemeal rather than reading them entirely into memory
 - Write more tests
+- Make the `read_*` and `write_*` tests operate on actual files
 - Upload to PyPI
 - For next version: Give the `read_*` functions arguments for only accepting
   regex matches with certain buffers/surroundings?
