@@ -22,13 +22,13 @@ setup(
     author='John Thorvald Wodder II',
     author_email='linesep@varonathe.org',
     keywords='linebreak line break separator line-ending newline delimiters',
-    description='Reading lines with arbitrary separators',
+    description='Handling lines with arbitrary separators',
     long_description=long_desc,
     url='https://github.com/jwodder/linesep',
 
     setup_requires=['pytest-runner>=2.0,<3'],
     install_requires=[],
-    tests_require=['pytest>=2.8,<3'],
+    tests_require=['pytest>=2.8,<3', 'pytest-cov>=2.0,<3'],
 
     classifiers=[
         'Development Status :: 4 - Beta',

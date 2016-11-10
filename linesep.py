@@ -1,4 +1,6 @@
 """
+Handling lines with arbitrary separators
+
 Functions for reading a file or file-like object as a series of entries
 delimited by a given string or regex.  Each function returns a generator of the
 entries, optionally with the delimiters included.  The file-like object may
