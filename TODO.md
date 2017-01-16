@@ -1,5 +1,4 @@
 - Feed `.coverage` files to Coveralls
-- Test against and indicate support for Python 3.6 and pypy
 
 - Documentation:
     - Create a Readthedocs site?
