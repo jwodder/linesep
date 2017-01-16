@@ -26,7 +26,7 @@ Installation
 ============
 
 Just use `pip <https://pip.pypa.io>`_ (You have pip, right?) to install
-``linesep`` and its dependencies::
+``linesep``::
 
     pip install linesep
 

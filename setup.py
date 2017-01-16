@@ -48,5 +48,4 @@ setup(
         'Topic :: Text Processing',
         'Topic :: Utilities',
     ],
-
 )
