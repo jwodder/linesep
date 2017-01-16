@@ -42,8 +42,10 @@ Reading paragraphs separated by a blank line::
 
 Parsing output from ``find -print0``::
 
-    find = subprocess.Popen(['find', '/', '-some', '-complicated', '-condition',
-                                     '-print0'], stdout=subprocess.PIPE)
+    find = subprocess.Popen(
+        ['find', '/', '-some', '-complicated', '-condition', '-print0'],
+        stdout=subprocess.PIPE,
+    )
     for filepath in linesep.read_terminated(find.stdout, '\0'):
         ...
 

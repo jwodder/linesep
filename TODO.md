@@ -1,5 +1,4 @@
 - Documentation:
-    - Update README and module docstring
     - Add notes about potential pitfalls with regexes
 
         The only truly foolproof way to split on regexes is to read the whole
@@ -9,6 +8,8 @@
     - Point out in the docstrings that the `read_*` functions read the files
       piecemeal rather than reading them entirely into memory?
     - Add examples to the README showing regexes, writing, joining, & splitting
+    - Point out somewhere that the bytes/text nature of the input must match
+      that of the separator
 - Write more tests
 - Make the `read_*` and `write_*` tests operate on actual files
 - Feed `.coverage` files to Coveralls
