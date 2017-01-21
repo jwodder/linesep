@@ -1,5 +1,3 @@
-- Feed `.coverage` files to Coveralls
-
 - Documentation:
     - Create a Readthedocs site?
     - Add notes about potential pitfalls with regexes ("The only truly

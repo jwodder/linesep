@@ -45,8 +45,8 @@ setup(
         'Programming Language :: Python :: Implementation :: CPython',
         'Programming Language :: Python :: Implementation :: PyPy',
 
-        'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
+        'Intended Audience :: Developers',
         'Operating System :: OS Independent',
         'Topic :: Text Processing',
         'Topic :: Utilities',
