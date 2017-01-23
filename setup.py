@@ -29,7 +29,7 @@ setup(
     setup_requires=['pytest-runner>=2.0,<3'],
     install_requires=[],
     tests_require=[
-        'pytest>=2.8,<3',
+        'pytest>=3.0,<4',
         'pytest-cov>=2.0,<3',
         'pytest-flakes>=1.0,<2',
     ],
