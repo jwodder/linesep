@@ -10,6 +10,7 @@
     :target: https://coveralls.io/github/jwodder/linesep?branch=master
 
 .. image:: https://img.shields.io/pypi/pyversions/linesep.svg
+    :target: https://pypi.python.org/pypi/linesep
 
 .. image:: https://img.shields.io/github/license/jwodder/linesep.svg
     :target: https://opensource.org/licenses/MIT
