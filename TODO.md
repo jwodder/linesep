@@ -1,3 +1,5 @@
+- Use Appveyor <https://packaging.python.org/appveyor/>
+
 - Documentation:
     - Create a Readthedocs site?
     - Add notes about potential pitfalls with regexes ("The only truly
