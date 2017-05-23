@@ -256,8 +256,7 @@ def _join_pairs(iterable):
     unmodified.
     """
     i = iter(iterable)
-    while True:
-        a = next(i)
+    for a in i:
         try:
             b = next(i)
         except StopIteration:
