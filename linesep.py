@@ -10,7 +10,7 @@ packaging & testing procedures.  Being actually useful is not its #1 goal.
 Visit <https://github.com/jwodder/linesep> for more information.
 """
 
-__version__      = '0.2.0.dev1'
+__version__      = '0.1.1'
 __author__       = 'John Thorvald Wodder II'
 __author_email__ = 'linesep@varonathe.org'
 __license__      = 'MIT'

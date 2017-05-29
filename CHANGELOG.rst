@@ -1,5 +1,5 @@
-v0.2.0 (in development)
------------------------
+v0.1.1 (2017-05-29)
+-------------------
 - Remove a ``PendingDeprecationWarning`` generated in newer versions of Python
   3.5 and 3.6
 - More testing infrastructure
