@@ -1,7 +1,8 @@
 - Use Appveyor <https://packaging.python.org/appveyor/>
+    - cf. <https://github.com/ogrisel/python-appveyor-demo>
+- Change repostatus?
 
 - Documentation:
-    - Create a Readthedocs site?
     - Add notes about potential pitfalls with regexes ("The only truly
       foolproof way to split on regexes is to read the whole file into memory
       and use the `split_*` functions")

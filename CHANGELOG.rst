@@ -1,3 +1,7 @@
+v0.2.0 (in development)
+-----------------------
+- Drop support for Python 2.6 and 3.3
+
 v0.1.1 (2017-05-29)
 -------------------
 - Remove a ``PendingDeprecationWarning`` generated in newer versions of Python
