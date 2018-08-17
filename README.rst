@@ -6,8 +6,8 @@
 .. image:: https://travis-ci.org/jwodder/linesep.svg?branch=master
     :target: https://travis-ci.org/jwodder/linesep
 
-.. image:: https://coveralls.io/repos/github/jwodder/linesep/badge.svg?branch=master
-    :target: https://coveralls.io/github/jwodder/linesep?branch=master
+.. image:: https://codecov.io/gh/jwodder/linesep/branch/master/graph/badge.svg
+    :target: https://codecov.io/gh/jwodder/linesep
 
 .. image:: https://img.shields.io/pypi/pyversions/linesep.svg
     :target: https://pypi.python.org/pypi/linesep
