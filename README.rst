@@ -10,14 +10,17 @@
     :target: https://codecov.io/gh/jwodder/linesep
 
 .. image:: https://img.shields.io/pypi/pyversions/linesep.svg
-    :target: https://pypi.python.org/pypi/linesep
+    :target: https://pypi.org/project/linesep
 
 .. image:: https://img.shields.io/github/license/jwodder/linesep.svg
     :target: https://opensource.org/licenses/MIT
     :alt: MIT License
 
+.. image:: https://img.shields.io/badge/Say%20Thanks-!-1EAEDB.svg
+    :target: https://saythanks.io/to/jwodder
+
 `GitHub <https://github.com/jwodder/linesep>`_
-| `PyPI <https://pypi.python.org/pypi/linesep>`_
+| `PyPI <https://pypi.org/project/linesep>`_
 | `Issues <https://github.com/jwodder/linesep/issues>`_
 
 This module provides basic functions for reading & writing text with custom
