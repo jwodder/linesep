@@ -1,5 +1,6 @@
 language: python
 cache: pip
+dist: xenial
 python:
     - '2.7'
     - '3.4'
@@ -9,7 +10,6 @@ python:
     - '3.8'
     - pypy
     - pypy3
-dist: xenial
 install:
     - pip install codecov tox
 script:
