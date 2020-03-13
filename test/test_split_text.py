@@ -153,25 +153,177 @@ scenarios = [
     }),
 
     ('straddling_delim', {
-        "text": "This test is intended to test splitting when the separator is a multicharacter delimiter that straddles the boundary between the 512-character chunks that the `read_*` functions divide their input into.  Unfortunately, I'm already bored of writing this test, and I still have 237 characters left to go.  Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.  Ut enim ad minim veniam, quis nostrud exercitation ullamco Here it comes  --->  |\r\n|  <--- There should be a split right there; is there?",
+        "text": "This test is intended to test splitting when the separator is"
+                " a multicharacter delimiter that straddles the boundary"
+                " between the 512-character chunks that the `read_*` functions"
+                " divide their input into.  Unfortunately, I'm already bored"
+                " of writing this test, and I still have 237 characters left"
+                " to go.  Lorem ipsum dolor sit amet, consectetur adipisicing"
+                " elit, sed do eiusmod tempor incididunt ut labore et dolore"
+                " magna aliqua.  Ut enim ad minim veniam, quis nostrud"
+                " exercitation ullamco Here it comes  --->  |\r\n|  <--- There"
+                " should be a split right there; is there?",
         "sep": "\r\n",
-        "preceded": ["This test is intended to test splitting when the separator is a multicharacter delimiter that straddles the boundary between the 512-character chunks that the `read_*` functions divide their input into.  Unfortunately, I'm already bored of writing this test, and I still have 237 characters left to go.  Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.  Ut enim ad minim veniam, quis nostrud exercitation ullamco Here it comes  --->  |", "|  <--- There should be a split right there; is there?"],
-        "preceded_retained": ["This test is intended to test splitting when the separator is a multicharacter delimiter that straddles the boundary between the 512-character chunks that the `read_*` functions divide their input into.  Unfortunately, I'm already bored of writing this test, and I still have 237 characters left to go.  Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.  Ut enim ad minim veniam, quis nostrud exercitation ullamco Here it comes  --->  |", "\r\n|  <--- There should be a split right there; is there?"],
-        "separated": ["This test is intended to test splitting when the separator is a multicharacter delimiter that straddles the boundary between the 512-character chunks that the `read_*` functions divide their input into.  Unfortunately, I'm already bored of writing this test, and I still have 237 characters left to go.  Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.  Ut enim ad minim veniam, quis nostrud exercitation ullamco Here it comes  --->  |", "|  <--- There should be a split right there; is there?"],
-        "separated_retained": ["This test is intended to test splitting when the separator is a multicharacter delimiter that straddles the boundary between the 512-character chunks that the `read_*` functions divide their input into.  Unfortunately, I'm already bored of writing this test, and I still have 237 characters left to go.  Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.  Ut enim ad minim veniam, quis nostrud exercitation ullamco Here it comes  --->  |", "\r\n", "|  <--- There should be a split right there; is there?"],
-        "terminated": ["This test is intended to test splitting when the separator is a multicharacter delimiter that straddles the boundary between the 512-character chunks that the `read_*` functions divide their input into.  Unfortunately, I'm already bored of writing this test, and I still have 237 characters left to go.  Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.  Ut enim ad minim veniam, quis nostrud exercitation ullamco Here it comes  --->  |", "|  <--- There should be a split right there; is there?"],
-        "terminated_retained": ["This test is intended to test splitting when the separator is a multicharacter delimiter that straddles the boundary between the 512-character chunks that the `read_*` functions divide their input into.  Unfortunately, I'm already bored of writing this test, and I still have 237 characters left to go.  Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.  Ut enim ad minim veniam, quis nostrud exercitation ullamco Here it comes  --->  |\r\n", "|  <--- There should be a split right there; is there?"],
+        "preceded": [
+            "This test is intended to test splitting when the separator is a"
+            " multicharacter delimiter that straddles the boundary between the"
+            " 512-character chunks that the `read_*` functions divide their"
+            " input into.  Unfortunately, I'm already bored of writing this"
+            " test, and I still have 237 characters left to go.  Lorem ipsum"
+            " dolor sit amet, consectetur adipisicing elit, sed do eiusmod"
+            " tempor incididunt ut labore et dolore magna aliqua.  Ut enim ad"
+            " minim veniam, quis nostrud exercitation ullamco Here it comes"
+            "  --->  |",
+            "|  <--- There should be a split right there; is there?"
+        ],
+        "preceded_retained": [
+            "This test is intended to test splitting when the separator is a"
+            " multicharacter delimiter that straddles the boundary between the"
+            " 512-character chunks that the `read_*` functions divide their"
+            " input into.  Unfortunately, I'm already bored of writing this"
+            " test, and I still have 237 characters left to go.  Lorem ipsum"
+            " dolor sit amet, consectetur adipisicing elit, sed do eiusmod"
+            " tempor incididunt ut labore et dolore magna aliqua.  Ut enim ad"
+            " minim veniam, quis nostrud exercitation ullamco Here it comes"
+            "  --->  |",
+            "\r\n|  <--- There should be a split right there; is there?"
+        ],
+        "separated": [
+            "This test is intended to test splitting when the separator is a"
+            " multicharacter delimiter that straddles the boundary between the"
+            " 512-character chunks that the `read_*` functions divide their"
+            " input into.  Unfortunately, I'm already bored of writing this"
+            " test, and I still have 237 characters left to go.  Lorem ipsum"
+            " dolor sit amet, consectetur adipisicing elit, sed do eiusmod"
+            " tempor incididunt ut labore et dolore magna aliqua.  Ut enim ad"
+            " minim veniam, quis nostrud exercitation ullamco Here it comes"
+            "  --->  |",
+            "|  <--- There should be a split right there; is there?"
+        ],
+        "separated_retained": [
+            "This test is intended to test splitting when the separator is a"
+            " multicharacter delimiter that straddles the boundary between the"
+            " 512-character chunks that the `read_*` functions divide their"
+            " input into.  Unfortunately, I'm already bored of writing this"
+            " test, and I still have 237 characters left to go.  Lorem ipsum"
+            " dolor sit amet, consectetur adipisicing elit, sed do eiusmod"
+            " tempor incididunt ut labore et dolore magna aliqua.  Ut enim ad"
+            " minim veniam, quis nostrud exercitation ullamco Here it comes"
+            "  --->  |",
+            "\r\n",
+            "|  <--- There should be a split right there; is there?"
+        ],
+        "terminated": [
+            "This test is intended to test splitting when the separator is a"
+            " multicharacter delimiter that straddles the boundary between the"
+            " 512-character chunks that the `read_*` functions divide their"
+            " input into.  Unfortunately, I'm already bored of writing this"
+            " test, and I still have 237 characters left to go.  Lorem ipsum"
+            " dolor sit amet, consectetur adipisicing elit, sed do eiusmod"
+            " tempor incididunt ut labore et dolore magna aliqua.  Ut enim ad"
+            " minim veniam, quis nostrud exercitation ullamco Here it comes"
+            "  --->  |",
+            "|  <--- There should be a split right there; is there?"
+        ],
+        "terminated_retained": [
+            "This test is intended to test splitting when the separator is a"
+            " multicharacter delimiter that straddles the boundary between the"
+            " 512-character chunks that the `read_*` functions divide their"
+            " input into.  Unfortunately, I'm already bored of writing this"
+            " test, and I still have 237 characters left to go.  Lorem ipsum"
+            " dolor sit amet, consectetur adipisicing elit, sed do eiusmod"
+            " tempor incididunt ut labore et dolore magna aliqua.  Ut enim ad"
+            " minim veniam, quis nostrud exercitation ullamco Here it comes"
+            "  --->  |\r\n",
+            "|  <--- There should be a split right there; is there?"
+        ],
     }),
 
     ('big_entry', {
-        "text": "This test is intended to test splitting when a single entry is longer than the 512-character chunk size.  Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.  Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.  Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.  Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia|\r\n| deserunt mollit anim id est laborum.",
+        "text": "This test is intended to test splitting when a single entry"
+                " is longer than the 512-character chunk size.  Lorem ipsum"
+                " dolor sit amet, consectetur adipisicing elit, sed do"
+                " eiusmod tempor incididunt ut labore et dolore magna aliqua."
+                "  Ut enim ad minim veniam, quis nostrud exercitation ullamco"
+                " laboris nisi ut aliquip ex ea commodo consequat.  Duis aute"
+                " irure dolor in reprehenderit in voluptate velit esse cillum"
+                " dolore eu fugiat nulla pariatur.  Excepteur sint occaecat"
+                " cupidatat non proident, sunt in culpa qui officia|\r\n|"
+                " deserunt mollit anim id est laborum.",
         "sep": "\r\n",
-        "preceded": ["This test is intended to test splitting when a single entry is longer than the 512-character chunk size.  Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.  Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.  Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.  Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia|", "| deserunt mollit anim id est laborum."],
-        "preceded_retained": ["This test is intended to test splitting when a single entry is longer than the 512-character chunk size.  Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.  Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.  Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.  Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia|", "\r\n| deserunt mollit anim id est laborum."],
-        "separated": ["This test is intended to test splitting when a single entry is longer than the 512-character chunk size.  Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.  Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.  Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.  Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia|", "| deserunt mollit anim id est laborum."],
-        "separated_retained": ["This test is intended to test splitting when a single entry is longer than the 512-character chunk size.  Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.  Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.  Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.  Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia|", "\r\n", "| deserunt mollit anim id est laborum."],
-        "terminated": ["This test is intended to test splitting when a single entry is longer than the 512-character chunk size.  Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.  Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.  Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.  Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia|", "| deserunt mollit anim id est laborum."],
-        "terminated_retained": ["This test is intended to test splitting when a single entry is longer than the 512-character chunk size.  Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.  Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.  Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.  Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia|\r\n", "| deserunt mollit anim id est laborum."],
+        "preceded": [
+            "This test is intended to test splitting when a single entry is"
+            " longer than the 512-character chunk size.  Lorem ipsum dolor sit"
+            " amet, consectetur adipisicing elit, sed do eiusmod tempor"
+            " incididunt ut labore et dolore magna aliqua.  Ut enim ad minim"
+            " veniam, quis nostrud exercitation ullamco laboris nisi ut"
+            " aliquip ex ea commodo consequat.  Duis aute irure dolor in"
+            " reprehenderit in voluptate velit esse cillum dolore eu fugiat"
+            " nulla pariatur.  Excepteur sint occaecat cupidatat non proident,"
+            " sunt in culpa qui officia|",
+            "| deserunt mollit anim id est laborum."
+        ],
+        "preceded_retained": [
+            "This test is intended to test splitting when a single entry is"
+            " longer than the 512-character chunk size.  Lorem ipsum dolor sit"
+            " amet, consectetur adipisicing elit, sed do eiusmod tempor"
+            " incididunt ut labore et dolore magna aliqua.  Ut enim ad minim"
+            " veniam, quis nostrud exercitation ullamco laboris nisi ut"
+            " aliquip ex ea commodo consequat.  Duis aute irure dolor in"
+            " reprehenderit in voluptate velit esse cillum dolore eu fugiat"
+            " nulla pariatur.  Excepteur sint occaecat cupidatat non proident,"
+            " sunt in culpa qui officia|",
+            "\r\n| deserunt mollit anim id est laborum."
+        ],
+        "separated": [
+            "This test is intended to test splitting when a single entry is"
+            " longer than the 512-character chunk size.  Lorem ipsum dolor sit"
+            " amet, consectetur adipisicing elit, sed do eiusmod tempor"
+            " incididunt ut labore et dolore magna aliqua.  Ut enim ad minim"
+            " veniam, quis nostrud exercitation ullamco laboris nisi ut"
+            " aliquip ex ea commodo consequat.  Duis aute irure dolor in"
+            " reprehenderit in voluptate velit esse cillum dolore eu fugiat"
+            " nulla pariatur.  Excepteur sint occaecat cupidatat non proident,"
+            " sunt in culpa qui officia|",
+            "| deserunt mollit anim id est laborum."
+        ],
+        "separated_retained": [
+            "This test is intended to test splitting when a single entry is"
+            " longer than the 512-character chunk size.  Lorem ipsum dolor sit"
+            " amet, consectetur adipisicing elit, sed do eiusmod tempor"
+            " incididunt ut labore et dolore magna aliqua.  Ut enim ad minim"
+            " veniam, quis nostrud exercitation ullamco laboris nisi ut"
+            " aliquip ex ea commodo consequat.  Duis aute irure dolor in"
+            " reprehenderit in voluptate velit esse cillum dolore eu fugiat"
+            " nulla pariatur.  Excepteur sint occaecat cupidatat non proident,"
+            " sunt in culpa qui officia|",
+            "\r\n",
+            "| deserunt mollit anim id est laborum."
+        ],
+        "terminated": [
+            "This test is intended to test splitting when a single entry is"
+            " longer than the 512-character chunk size.  Lorem ipsum dolor sit"
+            " amet, consectetur adipisicing elit, sed do eiusmod tempor"
+            " incididunt ut labore et dolore magna aliqua.  Ut enim ad minim"
+            " veniam, quis nostrud exercitation ullamco laboris nisi ut"
+            " aliquip ex ea commodo consequat.  Duis aute irure dolor in"
+            " reprehenderit in voluptate velit esse cillum dolore eu fugiat"
+            " nulla pariatur.  Excepteur sint occaecat cupidatat non proident,"
+            " sunt in culpa qui officia|",
+            "| deserunt mollit anim id est laborum."
+        ],
+        "terminated_retained": [
+            "This test is intended to test splitting when a single entry is"
+            " longer than the 512-character chunk size.  Lorem ipsum dolor sit"
+            " amet, consectetur adipisicing elit, sed do eiusmod tempor"
+            " incididunt ut labore et dolore magna aliqua.  Ut enim ad minim"
+            " veniam, quis nostrud exercitation ullamco laboris nisi ut"
+            " aliquip ex ea commodo consequat.  Duis aute irure dolor in"
+            " reprehenderit in voluptate velit esse cillum dolore eu fugiat"
+            " nulla pariatur.  Excepteur sint occaecat cupidatat non proident,"
+            " sunt in culpa qui officia|\r\n",
+            "| deserunt mollit anim id est laborum."
+        ],
     }),
 
 ]
@@ -189,25 +341,32 @@ def test_split_preceded_retained(text, sep, preceded_retained):
     assert linesep.split_preceded(text, sep, retain=True) == preceded_retained
 
 def test_split_terminated_retained(text, sep, terminated_retained):
-    assert linesep.split_terminated(text, sep, retain=True) == terminated_retained
+    assert linesep.split_terminated(text, sep, retain=True) \
+        == terminated_retained
 
 def test_split_separated_retained(text, sep, separated_retained):
     assert linesep.split_separated(text, sep, retain=True) == separated_retained
 
 def test_read_preceded(text, sep, preceded):
-    assert list(linesep.read_preceded(StringIO(text), sep, retain=False)) == preceded
+    assert list(linesep.read_preceded(StringIO(text), sep, retain=False)) \
+        == preceded
 
 def test_read_terminated(text, sep, terminated):
-    assert list(linesep.read_terminated(StringIO(text), sep, retain=False)) == terminated
+    assert list(linesep.read_terminated(StringIO(text), sep, retain=False)) \
+        == terminated
 
 def test_read_separated(text, sep, separated):
-    assert list(linesep.read_separated(StringIO(text), sep, retain=False)) == separated
+    assert list(linesep.read_separated(StringIO(text), sep, retain=False)) \
+        == separated
 
 def test_read_preceded_retained(text, sep, preceded_retained):
-    assert list(linesep.read_preceded(StringIO(text), sep, retain=True)) == preceded_retained
+    assert list(linesep.read_preceded(StringIO(text), sep, retain=True)) \
+        == preceded_retained
 
 def test_read_terminated_retained(text, sep, terminated_retained):
-    assert list(linesep.read_terminated(StringIO(text), sep, retain=True)) == terminated_retained
+    assert list(linesep.read_terminated(StringIO(text), sep, retain=True)) \
+        == terminated_retained
 
 def test_read_separated_retained(text, sep, separated_retained):
-    assert list(linesep.read_separated(StringIO(text), sep, retain=True)) == separated_retained
+    assert list(linesep.read_separated(StringIO(text), sep, retain=True)) \
+        == separated_retained
