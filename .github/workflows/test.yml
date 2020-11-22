@@ -43,22 +43,4 @@ jobs:
         with:
           fail_ci_if_error: false
 
-      - name: Send e-mail on failed scheduled run
-        if: "failure() && github.event_name == 'schedule'"
-        uses: dawidd6/action-send-mail@v2
-        with:
-          server_address: ${{ secrets.NOTIFY_SMTP_HOST }}
-          server_port: ${{ secrets.NOTIFY_SMTP_PORT }}
-          username: ${{ secrets.NOTIFY_SMTP_USERNAME }}
-          password: ${{ secrets.NOTIFY_SMTP_PASSWORD }}
-          from: GitHub Actions Notifications
-          to: ${{ secrets.NOTIFY_RECIPIENT }}
-          subject: '[${{ github.repository }}] Scheduled run of "${{ github.workflow }}" failed!'
-          body: |
-            A scheduled run of the "${{ github.workflow }}" workflow on ${{ github.repository }} failed for the following matrix:
-
-            ${{ toJSON(matrix) }}
-
-            See <https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}> for more information.
-
 # vim:set et sts=2:
