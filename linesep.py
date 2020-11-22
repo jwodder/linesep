@@ -119,7 +119,7 @@ def split_preceded(s, sep, retain=False):
     """
     entries = split_separated(s, sep, retain)
     if retain:
-        entries[1:] = list(_join_pairs(entries[1:]))
+        entries[0:] = list(_join_pairs(entries[1:]))
     if not entries[0]:
         entries.pop(0)
     return entries
