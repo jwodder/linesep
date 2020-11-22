@@ -55,7 +55,9 @@ jobs:
           to: ${{ secrets.NOTIFY_RECIPIENT }}
           subject: '[${{ github.repository }}] Scheduled run of "${{ github.workflow }}" failed!'
           body: |
-            A scheduled run of the "${{ github.workflow }}" workflow on ${{ github.repository }} failed!
+            A scheduled run of the "${{ github.workflow }}" workflow on ${{ github.repository }} failed for the following matrix:
+
+            ${{ toJSON(matrix) }}
 
             See <https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}> for more information.
 
