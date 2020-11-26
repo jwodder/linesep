@@ -1,5 +1,3 @@
-- Use Appveyor <https://packaging.python.org/appveyor/>
-    - cf. <https://github.com/ogrisel/python-appveyor-demo>
 - Change repostatus?
 
 - Documentation:
@@ -11,6 +9,8 @@
     - Add examples to the README showing regexes, writing, joining, & splitting
     - Point out somewhere that the bytes/text nature of the input must match
       that of the separator
+
+- Deprecate reading with a regex delimiter?
 
 - Write more tests:
     - Make the `read_*` and `write_*` tests operate on actual files
@@ -27,6 +27,7 @@ New Features
 - Add a convenience function for reading/splitting on `\r\n?|\n`?
 - Add a `read_paragraphs` function that treats two or more consecutive empty
   lines as a delimiter
+- Add a `split_paragraphs` function?
 - Add functions for creating codecs that convert between `\n` and given
   separators? (cf. `io.IncrementalNewlineDecoder`)
 - Give the `read_*` functions arguments for only accepting regex matches with

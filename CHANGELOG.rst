@@ -1,7 +1,6 @@
 v0.2.0 (in development)
 -----------------------
-- Drop support for Python 2.6, 3.3, and 3.4
-- Support Python 3.7, 3.8, 3.9, and PyPy3
+- Now support only Python 3.6 and up (tested through 3.9) and PyPy3
 
 v0.1.1 (2017-05-29)
 -------------------

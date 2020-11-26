@@ -1,10 +1,6 @@
+from   io import BytesIO
 import re
 import linesep
-
-try:
-    from StringIO import StringIO as BytesIO
-except ImportError:
-    from io       import BytesIO
 
 scenarios = [
 

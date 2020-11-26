@@ -29,11 +29,11 @@ packaging & testing procedures.  Being actually useful is not its #1 goal.
 
 Installation
 ============
+``linesep`` requires Python 3.6 or higher.  Just use `pip
+<https://pip.pypa.io>`_ for Python 3 (You have pip, right?) to install
+``linesep`` and its dependencies::
 
-Just use `pip <https://pip.pypa.io>`_ (You have pip, right?) to install
-``linesep``::
-
-    pip install linesep
+    python3 -m pip install linesep
 
 
 Examples

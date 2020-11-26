@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Handling lines with arbitrary separators
 

@@ -1,10 +1,5 @@
-from   __future__ import unicode_literals
+from   io import StringIO
 import linesep
-
-try:
-    from StringIO import StringIO
-except ImportError:
-    from io       import StringIO
 
 scenarios = [
 
