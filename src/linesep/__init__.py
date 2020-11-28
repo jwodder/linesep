@@ -1,10 +1,9 @@
 """
 Handling lines with arbitrary separators
 
-This module provides basic functions for reading & writing text with custom
-line separators that can occur either before, between, or after lines — though
-its primary purpose is actually to allow me to experiment with proper Python
-packaging & testing procedures.  Being actually useful is not its #1 goal.
+``linesep`` provides basic functions for reading, writing, splitting, & joining
+text with custom separators that can occur either before, between, or after
+the segments they separate.
 
 Visit <https://github.com/jwodder/linesep> for more information.
 """
@@ -30,24 +29,30 @@ def read_preceded(
     fp: IO[AnyStr],
     sep: Union[AnyStr, Pattern[AnyStr]],
     retain: bool = False,
-    size: int = 512,
+    chunk_size: int = 512,
 ) -> Iterator[AnyStr]:
     """
-    Read lines from a file-like object ``fp`` in which the beginning of each
-    line is indicated by the string or compiled regex ``sep``.  A generator of
-    lines is returned; an empty file will always produce an empty generator.
+    Read segments from a file-like object ``fp`` in which the beginning of each
+    segment is indicated by the string or compiled regex ``sep``.  A generator
+    of segments is returned; an empty file will always produce an empty
+    generator.
+
+    Data is read from the filehandle ``chunk_size`` characters at a time.  If
+    ``sep`` is a variable-length compiled regex and a delimiter in the file
+    crosses a chunk boundary, the results are undefined.
 
     :param fp: a binary or text file-like object
     :param sep: a string or compiled regex that indicates the start of a new
-        line wherever it occurs
+        segment wherever it occurs
     :param bool retain: whether to include the delimiters at the beginning of
-        each line
-    :param int size: how many bytes or characters to read from ``fp`` at a time
-    :return: a generator of the lines in ``fp``
+        each segment
+    :param int chunk_size: how many bytes or characters to read from ``fp`` at
+        a time
+    :return: a generator of the segments in ``fp``
     :rtype: generator of binary or text strings
     """
     # Omits empty leading entry
-    entries = read_separated(fp, sep, retain=retain, size=size)
+    entries = read_separated(fp, sep, retain=retain, chunk_size=chunk_size)
     e = next(entries)
     if e:
         yield e
@@ -60,28 +65,33 @@ def read_separated(
     fp: IO[AnyStr],
     sep: Union[AnyStr, Pattern[AnyStr]],
     retain: bool = False,
-    size: int = 512,
+    chunk_size: int = 512,
 ) -> Iterator[AnyStr]:
     """
-    Read lines from a file-like object ``fp`` in which lines are separated by
-    the string or compiled regex ``sep``.  A generator of lines is returned; an
-    empty file will always produce a generator with one element, the empty
-    string.
+    Read segments from a file-like object ``fp`` in which segments are
+    separated by the string or compiled regex ``sep``.  A generator of segments
+    is returned; an empty file will always produce a generator with one
+    element, the empty string.
+
+    Data is read from the filehandle ``chunk_size`` characters at a time.  If
+    ``sep`` is a variable-length compiled regex and a delimiter in the file
+    crosses a chunk boundary, the results are undefined.
 
     :param fp: a binary or text file-like object
-    :param sep: a string or compiled regex that indicates the end of one line
-        and the beginning of another wherever it occurs
-    :param bool retain: When `True`, the line separators will be included in
+    :param sep: a string or compiled regex that indicates the end of one
+        segment and the beginning of another wherever it occurs
+    :param bool retain: When `True`, the segment separators will be included in
         the output, with the elements of the generator alternating between
-        lines and separators, starting with a (possibly empty) line
-    :param int size: how many bytes or characters to read from ``fp`` at a time
-    :return: a generator of the lines in ``fp``
+        segments and separators, starting with a (possibly empty) segment
+    :param int chunk_size: how many bytes or characters to read from ``fp`` at
+        a time
+    :return: a generator of the segments in ``fp``
     :rtype: generator of binary or text strings
     """
     seppattern = _ensure_compiled(sep)
     empty = fp.read(0)  # b'' or u'' as appropriate
     buff = empty
-    for chunk in iter(lambda: fp.read(size), empty):
+    for chunk in iter(lambda: fp.read(chunk_size), empty):
         buff += chunk
         lastend = 0
         for m in seppattern.finditer(buff):
@@ -96,25 +106,31 @@ def read_terminated(
     fp: IO[AnyStr],
     sep: Union[AnyStr, Pattern[AnyStr]],
     retain: bool = False,
-    size: int = 512,
+    chunk_size: int = 512,
 ) -> Iterator[AnyStr]:
     """
-    Read lines from a file-like object ``fp`` in which the end of each line is
-    indicated by the string or compiled regex ``sep``.  A generator of lines is
-    returned; an empty file will always produce an empty generator.
+    Read segments from a file-like object ``fp`` in which the end of each
+    segment is indicated by the string or compiled regex ``sep``.  A generator
+    of segments is returned; an empty file will always produce an empty
+    generator.
+
+    Data is read from the filehandle ``chunk_size`` characters at a time.  If
+    ``sep`` is a variable-length compiled regex and a delimiter in the file
+    crosses a chunk boundary, the results are undefined.
 
     :param fp: a binary or text file-like object
-    :param sep: a string or compiled regex that indicates the end of a line
+    :param sep: a string or compiled regex that indicates the end of a segment
         wherever it occurs
     :param bool retain: whether to include the delimiters at the end of each
-        line
-    :param int size: how many bytes or characters to read from ``fp`` at a time
-    :return: a generator of the lines in ``fp``
+        segment
+    :param int chunk_size: how many bytes or characters to read from ``fp`` at
+        a time
+    :return: a generator of the segments in ``fp``
     :rtype: generator of binary or text strings
     """
     # Omits empty trailing entry
     prev = None
-    entries = read_separated(fp, sep, retain=retain, size=size)
+    entries = read_separated(fp, sep, retain=retain, chunk_size=chunk_size)
     if retain:
         entries = _join_pairs(entries)
     for e in entries:
@@ -130,16 +146,16 @@ def split_preceded(
     retain: bool = False,
 ) -> List[AnyStr]:
     """
-    Split a string ``s`` into zero or more lines starting with/preceded by the
-    string or compiled regex ``sep``.  A list of lines is returned; an empty
-    input string will always produce an empty list.
+    Split a string ``s`` into zero or more segments starting with/preceded by
+    the string or compiled regex ``sep``.  A list of segments is returned; an
+    empty input string will always produce an empty list.
 
     :param s: a binary or text string
     :param sep: a string or compiled regex that indicates the start of a new
-        line wherever it occurs
+        segment wherever it occurs
     :param bool retain: whether to include the delimiters at the beginning of
-        each line
-    :return: a list of the lines in ``s``
+        each segment
+    :return: a list of the segments in ``s``
     :rtype: list of binary or text strings
     """
     entries = split_separated(s, sep, retain)
@@ -155,17 +171,17 @@ def split_separated(
     retain: bool = False,
 ) -> List[AnyStr]:
     """
-    Split a string ``s`` into one or more lines separated by the string or
-    compiled regex ``sep``.  A list of lines is returned; an empty input string
-    will always produce a list with one element, the empty string.
+    Split a string ``s`` into one or more segments separated by the string or
+    compiled regex ``sep``.  A list of segments is returned; an empty input
+    string will always produce a list with one element, the empty string.
 
     :param s: a binary or text string
-    :param sep: a string or compiled regex that indicates the end of one line
-        and the beginning of another wherever it occurs
-    :param bool retain: When `True`, the line separators will be included in
-        the output, with the elements of the list alternating between lines and
-        separators, starting with a (possibly empty) line
-    :return: a list of the lines in ``s``
+    :param sep: a string or compiled regex that indicates the end of one
+        segment and the beginning of another wherever it occurs
+    :param bool retain: When `True`, the segment separators will be included in
+        the output, with the elements of the list alternating between segments
+        and separators, starting with a (possibly empty) segment
+    :return: a list of the segments in ``s``
     :rtype: list of binary or text strings
     """
     seppattern = _ensure_compiled(sep)
@@ -185,16 +201,16 @@ def split_terminated(
     retain: bool = False,
 ) -> List[AnyStr]:
     """
-    Split a string ``s`` into zero or more lines terminated by the
-    string or compiled regex ``sep``.  A list of lines is returned; an empty
+    Split a string ``s`` into zero or more segments terminated by the
+    string or compiled regex ``sep``.  A list of segments is returned; an empty
     input string will always produce an empty list.
 
     :param s: a binary or text string
-    :param sep: a string or compiled regex that indicates the end of a line
+    :param sep: a string or compiled regex that indicates the end of a segment
         wherever it occurs
     :param bool retain: whether to include the delimiters at the end of each
-        line
-    :return: a list of the lines in ``s``
+        segment
+    :return: a list of the segments in ``s``
     :rtype: list of binary or text strings
     """
     entries = split_separated(s, sep, retain)
@@ -237,8 +253,8 @@ def join_terminated(iterable: Iterable[AnyStr], sep: AnyStr) -> AnyStr:
 
 def write_preceded(fp: IO[AnyStr], iterable: Iterable[AnyStr], sep: AnyStr) -> None:
     """
-    Write the elements of ``iterable`` to ``fp``, preceding each one with
-    ``sep``
+    Write the elements of ``iterable`` to the filehandle ``fp``, preceding each
+    one with ``sep``
 
     :param fp: a binary or text file-like object
     :param iterable: an iterable of binary or text strings
@@ -251,8 +267,8 @@ def write_preceded(fp: IO[AnyStr], iterable: Iterable[AnyStr], sep: AnyStr) -> N
 
 def write_separated(fp: IO[AnyStr], iterable: Iterable[AnyStr], sep: AnyStr) -> None:
     """
-    Write the elements of ``iterable`` to ``fp``, separating consecutive
-    elements with ``sep``
+    Write the elements of ``iterable`` to the filehandle ``fp``, separating
+    consecutive elements with ``sep``
 
     :param fp: a binary or text file-like object
     :param iterable: an iterable of binary or text strings
@@ -269,7 +285,8 @@ def write_separated(fp: IO[AnyStr], iterable: Iterable[AnyStr], sep: AnyStr) -> 
 
 def write_terminated(fp: IO[AnyStr], iterable: Iterable[AnyStr], sep: AnyStr) -> None:
     """
-    Write the elements of ``iterable`` to ``fp``, appending ``sep`` to each one
+    Write the elements of ``iterable`` to the filehandle ``fp``, appending
+    ``sep`` to each one
 
     :param fp: a binary or text file-like object
     :param iterable: an iterable of binary or text strings
