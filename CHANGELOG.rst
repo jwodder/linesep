@@ -1,5 +1,5 @@
-v0.2.0 (in development)
------------------------
+v0.2.0 (2020-11-28)
+-------------------
 - Now support only Python 3.6 and up (tested through 3.9) and PyPy3
 - Add type annotations
 - Renamed the "`size`" parameter of the `read_*` functions to `chunk_size`
