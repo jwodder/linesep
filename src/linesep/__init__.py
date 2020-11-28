@@ -16,8 +16,22 @@ __license__      = 'MIT'
 __url__          = 'https://github.com/jwodder/linesep'
 
 import re
+import sys
+from   typing import AnyStr, IO, Union
 
-def read_preceded(fp, sep, retain=False, size=512):
+if sys.version_info[:2] >= (3,9):
+    from collections.abc import Iterable, Iterator
+    from re import Pattern
+    List = list
+else:
+    from typing import Iterable, Iterator, List, Pattern
+
+def read_preceded(
+    fp: IO[AnyStr],
+    sep: Union[AnyStr, Pattern[AnyStr]],
+    retain: bool = False,
+    size: int = 512,
+) -> Iterator[AnyStr]:
     """
     Read lines from a file-like object ``fp`` in which the beginning of each
     line is indicated by the string or compiled regex ``sep``.  A generator of
@@ -42,7 +56,12 @@ def read_preceded(fp, sep, retain=False, size=512):
     for e in entries:
         yield e
 
-def read_separated(fp, sep, retain=False, size=512):
+def read_separated(
+    fp: IO[AnyStr],
+    sep: Union[AnyStr, Pattern[AnyStr]],
+    retain: bool = False,
+    size: int = 512,
+) -> Iterator[AnyStr]:
     """
     Read lines from a file-like object ``fp`` in which lines are separated by
     the string or compiled regex ``sep``.  A generator of lines is returned; an
@@ -59,15 +78,13 @@ def read_separated(fp, sep, retain=False, size=512):
     :return: a generator of the lines in ``fp``
     :rtype: generator of binary or text strings
     """
-    # http://stackoverflow.com/a/7054512/744178
-    if not hasattr(sep, 'match'):
-        sep = re.compile(re.escape(sep))
+    seppattern = _ensure_compiled(sep)
     empty = fp.read(0)  # b'' or u'' as appropriate
     buff = empty
     for chunk in iter(lambda: fp.read(size), empty):
         buff += chunk
         lastend = 0
-        for m in sep.finditer(buff):
+        for m in seppattern.finditer(buff):
             yield buff[lastend:m.start()]
             if retain:
                 yield m.group()
@@ -75,7 +92,12 @@ def read_separated(fp, sep, retain=False, size=512):
         buff = buff[lastend:]
     yield buff
 
-def read_terminated(fp, sep, retain=False, size=512):
+def read_terminated(
+    fp: IO[AnyStr],
+    sep: Union[AnyStr, Pattern[AnyStr]],
+    retain: bool = False,
+    size: int = 512,
+) -> Iterator[AnyStr]:
     """
     Read lines from a file-like object ``fp`` in which the end of each line is
     indicated by the string or compiled regex ``sep``.  A generator of lines is
@@ -102,7 +124,11 @@ def read_terminated(fp, sep, retain=False, size=512):
     if prev:
         yield prev
 
-def split_preceded(s, sep, retain=False):
+def split_preceded(
+    s: AnyStr,
+    sep: Union[AnyStr, Pattern[AnyStr]],
+    retain: bool = False,
+) -> List[AnyStr]:
     """
     Split a string ``s`` into zero or more lines starting with/preceded by the
     string or compiled regex ``sep``.  A list of lines is returned; an empty
@@ -123,7 +149,11 @@ def split_preceded(s, sep, retain=False):
         entries.pop(0)
     return entries
 
-def split_separated(s, sep, retain=False):
+def split_separated(
+    s: AnyStr,
+    sep: Union[AnyStr, Pattern[AnyStr]],
+    retain: bool = False,
+) -> List[AnyStr]:
     """
     Split a string ``s`` into one or more lines separated by the string or
     compiled regex ``sep``.  A list of lines is returned; an empty input string
@@ -138,12 +168,10 @@ def split_separated(s, sep, retain=False):
     :return: a list of the lines in ``s``
     :rtype: list of binary or text strings
     """
-    # http://stackoverflow.com/a/7054512/744178
-    if not hasattr(sep, 'match'):
-        sep = re.compile(re.escape(sep))
+    seppattern = _ensure_compiled(sep)
     entries = []
     lastend = 0
-    for m in sep.finditer(s):
+    for m in seppattern.finditer(s):
         entries.append(s[lastend:m.start()])
         if retain:
             entries.append(m.group())
@@ -151,7 +179,11 @@ def split_separated(s, sep, retain=False):
     entries.append(s[lastend:])
     return entries
 
-def split_terminated(s, sep, retain=False):
+def split_terminated(
+    s: AnyStr,
+    sep: Union[AnyStr, Pattern[AnyStr]],
+    retain: bool = False,
+) -> List[AnyStr]:
     """
     Split a string ``s`` into zero or more lines terminated by the
     string or compiled regex ``sep``.  A list of lines is returned; an empty
@@ -172,7 +204,7 @@ def split_terminated(s, sep, retain=False):
         entries.pop()
     return entries
 
-def join_preceded(iterable, sep):
+def join_preceded(iterable: Iterable[AnyStr], sep: AnyStr) -> AnyStr:
     """
     Join the elements of ``iterable`` together, preceding each one with ``sep``
 
@@ -182,7 +214,7 @@ def join_preceded(iterable, sep):
     """
     return sep[0:0].join(sep + s for s in iterable)
 
-def join_separated(iterable, sep):
+def join_separated(iterable: Iterable[AnyStr], sep: AnyStr) -> AnyStr:
     """
     Join the elements of ``iterable`` together, separating consecutive elements
     with ``sep``
@@ -193,7 +225,7 @@ def join_separated(iterable, sep):
     """
     return sep.join(iterable)
 
-def join_terminated(iterable, sep):
+def join_terminated(iterable: Iterable[AnyStr], sep: AnyStr) -> AnyStr:
     """
     Join the elements of ``iterable`` together, appending ``sep`` to each one
 
@@ -203,7 +235,7 @@ def join_terminated(iterable, sep):
     """
     return sep[0:0].join(s + sep for s in iterable)
 
-def write_preceded(fp, iterable, sep):
+def write_preceded(fp: IO[AnyStr], iterable: Iterable[AnyStr], sep: AnyStr) -> None:
     """
     Write the elements of ``iterable`` to ``fp``, preceding each one with
     ``sep``
@@ -217,7 +249,7 @@ def write_preceded(fp, iterable, sep):
         fp.write(sep)
         fp.write(s)
 
-def write_separated(fp, iterable, sep):
+def write_separated(fp: IO[AnyStr], iterable: Iterable[AnyStr], sep: AnyStr) -> None:
     """
     Write the elements of ``iterable`` to ``fp``, separating consecutive
     elements with ``sep``
@@ -235,7 +267,7 @@ def write_separated(fp, iterable, sep):
             fp.write(sep)
         fp.write(s)
 
-def write_terminated(fp, iterable, sep):
+def write_terminated(fp: IO[AnyStr], iterable: Iterable[AnyStr], sep: AnyStr) -> None:
     """
     Write the elements of ``iterable`` to ``fp``, appending ``sep`` to each one
 
@@ -248,7 +280,7 @@ def write_terminated(fp, iterable, sep):
         fp.write(s)
         fp.write(sep)
 
-def _join_pairs(iterable):
+def _join_pairs(iterable: Iterable[AnyStr]) -> Iterator[AnyStr]:
     """
     Concatenate each pair of consecutive strings in ``iterable``.  If there are
     an odd number of items in ``iterable``, the last one will be returned
@@ -263,3 +295,9 @@ def _join_pairs(iterable):
             return
         else:
             yield a + b
+
+def _ensure_compiled(sep: Union[AnyStr, Pattern[AnyStr]]) -> Pattern[AnyStr]:
+    if isinstance(sep, (bytes, str)):
+        return re.compile(re.escape(sep))
+    else:
+        return sep
