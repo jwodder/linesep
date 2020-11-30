@@ -1,3 +1,7 @@
+v0.3.0 (in development)
+-----------------------
+- Added ``ascii_splitlines()`` function
+
 v0.2.0 (2020-11-28)
 -------------------
 - Now support only Python 3.6 and up (tested through 3.9) and PyPy3

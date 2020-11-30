@@ -8,7 +8,7 @@ the segments they separate.
 Visit <https://github.com/jwodder/linesep> for more information.
 """
 
-__version__      = '0.2.0'
+__version__      = '0.3.0.dev1'
 __author__       = 'John Thorvald Wodder II'
 __author_email__ = 'linesep@varonathe.org'
 __license__      = 'MIT'
@@ -318,3 +318,23 @@ def _ensure_compiled(sep: Union[AnyStr, Pattern[AnyStr]]) -> Pattern[AnyStr]:
         return re.compile(re.escape(sep))
     else:
         return sep
+
+
+EOL_RGX = re.compile(r'\r\n?|\n')
+
+def ascii_splitlines(s: str, keepends: bool = False) -> List[str]:
+    """
+    Like `str.splitlines()`, except it only treats LF, CR LF, and CR as line
+    endings
+    """
+    lines = []
+    lastend = 0
+    for m in EOL_RGX.finditer(s):
+        if keepends:
+            lines.append(s[lastend:m.end()])
+        else:
+            lines.append(s[lastend:m.start()])
+        lastend = m.end()
+    if lastend < len(s):
+        lines.append(s[lastend:])
+    return lines

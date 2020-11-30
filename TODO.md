@@ -16,7 +16,6 @@
 
 New Features
 ------------
-- Add a convenience function for reading/splitting on `\r\n?|\n`?
 - Add a `read_paragraphs` function that treats two or more consecutive empty
   lines as a delimiter
 - Add a `split_paragraphs` function?

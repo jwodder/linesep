@@ -71,10 +71,10 @@ A poor man's JSON Sequence parser:
 API
 ===
 
-**Note**: Strings, filehandles, and regexes passed to this library's functions
-may be either binary or text.  However, the arguments to a single invocation of
-a function must be either all binary or all text, and the return type will
-match.
+**Note**: Strings, filehandles, and regexes passed to the ``read_*``,
+``write_*``, ``split_*``, and ``join_*`` functions may be either binary or
+text.  However, the arguments to a single invocation of a function must be
+either all binary or all text, and the return type will match.
 
 **Note**: Using the ``read_*`` functions with a variable-length regular
 expression is unreliable.  The only truly foolproof way to split on such
@@ -241,3 +241,12 @@ consecutive elements with ``sep``.
 
 Write the elements of ``iterable`` to the filehandle ``fp``, appending ``sep``
 to each one.
+
+.. code:: python
+
+    linesep.ascii_splitlines(s: str, keepends: bool = False) -> List[str]
+
+*New in version 0.3.0*
+
+Like ``str.splitlines()``, except it only treats LF, CR LF, and CR as line
+endings.
