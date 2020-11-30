@@ -14,6 +14,22 @@ __author_email__ = 'linesep@varonathe.org'
 __license__      = 'MIT'
 __url__          = 'https://github.com/jwodder/linesep'
 
+__all__ = [
+    "ascii_splitlines",
+    "join_preceded",
+    "join_separated",
+    "join_terminated",
+    "read_preceded",
+    "read_separated",
+    "read_terminated",
+    "split_preceded",
+    "split_separated",
+    "split_terminated",
+    "write_preceded",
+    "write_separated",
+    "write_terminated",
+]
+
 import re
 import sys
 from   typing import AnyStr, IO, Union
