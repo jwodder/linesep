@@ -1,6 +1,6 @@
 v0.3.0 (in development)
 -----------------------
-- Added ``ascii_splitlines()`` function
+- Added `ascii_splitlines()` function
 
 v0.2.0 (2020-11-28)
 -------------------
@@ -11,7 +11,7 @@ v0.2.0 (2020-11-28)
 
 v0.1.1 (2017-05-29)
 -------------------
-- Remove a ``PendingDeprecationWarning`` generated in newer versions of Python
+- Remove a `PendingDeprecationWarning` generated in newer versions of Python
   3.5 and 3.6
 - More testing infrastructure
 - PyPy now supported

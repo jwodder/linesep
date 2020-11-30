@@ -20,6 +20,7 @@
 `GitHub <https://github.com/jwodder/linesep>`_
 | `PyPI <https://pypi.org/project/linesep>`_
 | `Issues <https://github.com/jwodder/linesep/issues>`_
+| `Changelog <https://github.com/jwodder/linesep/blob/master/CHANGELOG.md>`_
 
 ``linesep`` provides basic functions for reading, writing, splitting, & joining
 text with custom separators that can occur either before, between, or after the
