@@ -37,12 +37,12 @@ Installation
 Examples
 ========
 
-Reading paragraphs separated by a blank line:
+Reading sections separated by a "``---``" line:
 
 .. code:: python
 
     with open('text.txt') as fp:
-        for entry in linesep.read_separated(fp, '\n\n'):
+        for entry in linesep.read_separated(fp, '\n---\n'):
             ...
 
 Parsing output from ``find -print0``:
@@ -56,7 +56,7 @@ Parsing output from ``find -print0``:
     for filepath in linesep.read_terminated(find.stdout, '\0'):
         ...
 
-A poor man's JSON Sequence parser:
+A poor man's `JSON Text Sequence <https://tools.ietf.org/html/rfc7464>`_ parser:
 
 .. code:: python
 
@@ -117,7 +117,7 @@ empty file will always produce a generator with one element, the empty string.
 
 If ``retain`` is true, the delimiters are included in the output, with the
 elements of the generator alternating between segments and separators, starting
-with a (possible empty) segment.  If ``retain`` is false, the delimiters will
+with a (possibly empty) segment.  If ``retain`` is false, the delimiters will
 be discarded.
 
 Data is read from the filehandle ``chunk_size`` characters at a time.  If
@@ -173,7 +173,7 @@ will always produce a list with one element, the empty string.
 
 If ``retain`` is true, the delimiters are included in the output, with the
 elements of the list alternating between segments and separators, starting
-with a (possible empty) segment.  If ``retain`` is false, the delimiters will
+with a (possibly empty) segment.  If ``retain`` is false, the delimiters will
 be discarded.
 
 .. code:: python

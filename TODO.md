@@ -16,9 +16,6 @@
 
 New Features
 ------------
-- Add a `read_paragraphs` function that treats two or more consecutive empty
-  lines as a delimiter
-- Add a `split_paragraphs` function?
 - Add functions for creating codecs that convert between `\n` and given
   separators? (cf. `io.IncrementalNewlineDecoder`)
 - Give the `read_*` functions arguments for only accepting regex matches with
