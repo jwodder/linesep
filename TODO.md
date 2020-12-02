@@ -1,5 +1,3 @@
-- Change repostatus?
-
 - Add examples to the README showing regexes, writing, joining, & splitting
 
 - Deprecate reading with a regex delimiter?
