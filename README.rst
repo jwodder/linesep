@@ -82,6 +82,24 @@ expression is unreliable.  The only truly foolproof way to split on such
 regexes is to first read the whole file into memory and then call one of the
 ``split_*`` functions.
 
+Note the following about how the different types of delimiters are handled at
+the beginning & end of input:
+
+- When segments are terminated by a given delimiter, a delimiter at the
+  beginning of the input creates an empty leading segment, and a delimiter at
+  the end of the input simply terminates the last segment.
+
+- When segments are separated by a given delimiter, a delimiter at the
+  beginning of the input creates an empty leading segment, and a delimiter at
+  the end of the input creates an empty trailing segment.
+
+- When segments are preceded by a given delimiter, a delimiter at the beginning
+  of the input simple starts the first segment, and a delimiter at the end of
+  the input creates an empty trailing segment.
+
+Two adjacent delimiters always create an empty segment between them, unless the
+delimiter is a regex that spans both delimiters at once.
+
 .. code:: python
 
     linesep.read_preceded(

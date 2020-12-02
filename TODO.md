@@ -7,9 +7,6 @@
     - Test splitting the same input with different `chunk_size` values (both
       prime and highly divisible)
     - Test empty separator?
-    - Test splitting a Unicode string on one of the bytes in its UTF-8 encoding
-    - Test text containing Unicode
-    - Test bytes containing Unicode
 
 
 New Features
