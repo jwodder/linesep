@@ -72,10 +72,10 @@ A poor man's JSON Sequence parser:
 API
 ===
 
-**Note**: Strings, filehandles, and regexes passed to the ``read_*``,
-``write_*``, ``split_*``, and ``join_*`` functions may be either binary or
-text.  However, the arguments to a single invocation of a function must be
-either all binary or all text, and the return type will match.
+**Note**: Strings, filehandles, and regexes passed to the ``*_preceded``,
+``*_separated``, and ``*_terminated`` functions may be either binary or text.
+However, the arguments to a single invocation of a function must be either all
+binary or all text, and the return type will match.
 
 **Note**: Using the ``read_*`` functions with a variable-length regular
 expression is unreliable.  The only truly foolproof way to split on such
@@ -251,3 +251,28 @@ to each one.
 
 Like ``str.splitlines()``, except it only treats LF, CR LF, and CR as line
 endings.
+
+.. code:: python
+
+    linesep.read_paragraphs(fp: Iterable[str]) -> Iterable[str]
+
+*New in version 0.3.0*
+
+Read a text filehandle or other iterable of lines (with trailing line endings
+retained) paragraph by paragraph.  Each paragraph is terminated by one or more
+blank lines (i.e., lines containining only a line ending).  Trailing and
+embedded line endings in each paragraph are retained.
+
+Only LF, CR LF, and CR are recognized as line endings.
+
+.. code:: python
+
+    linesep.split_paragraphs(s: str) -> List[str]
+
+*New in version 0.3.0*
+
+Split a string into paragraphs, each one terminated by one or more blank lines
+(i.e., lines containining only a line ending).  Trailing and embedded line
+endings in each paragraph are retained.
+
+Only LF, CR LF, and CR are recognized as line endings.

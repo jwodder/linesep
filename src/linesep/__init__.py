@@ -19,9 +19,11 @@ __all__ = [
     "join_preceded",
     "join_separated",
     "join_terminated",
+    "read_paragraphs",
     "read_preceded",
     "read_separated",
     "read_terminated",
+    "split_paragraphs",
     "split_preceded",
     "split_separated",
     "split_terminated",
@@ -335,17 +337,18 @@ def _ensure_compiled(sep: Union[AnyStr, Pattern[AnyStr]]) -> Pattern[AnyStr]:
     else:
         return sep
 
-
-EOL_RGX = re.compile(r'\r\n?|\n')
+_EOL_RGX = re.compile(r'\r\n?|\n')
 
 def ascii_splitlines(s: str, keepends: bool = False) -> List[str]:
     """
+    .. versionadded:: 0.3.0
+
     Like `str.splitlines()`, except it only treats LF, CR LF, and CR as line
     endings
     """
     lines = []
     lastend = 0
-    for m in EOL_RGX.finditer(s):
+    for m in _EOL_RGX.finditer(s):
         if keepends:
             lines.append(s[lastend:m.end()])
         else:
@@ -354,3 +357,42 @@ def ascii_splitlines(s: str, keepends: bool = False) -> List[str]:
     if lastend < len(s):
         lines.append(s[lastend:])
     return lines
+
+def read_paragraphs(fp: Iterable[str]) -> Iterable[str]:
+    """
+    .. versionadded:: 0.3.0
+
+    Read a text filehandle or other iterable of lines (with trailing line
+    endings retained) paragraph by paragraph.  Each paragraph is terminated by
+    one or more blank lines (i.e., lines containining only a line ending).
+    Trailing and embedded line endings in each paragraph are retained.
+
+    Only LF, CR LF, and CR are recognized as line endings.
+    """
+    para: List[str] = []
+    for line in fp:
+        if not _is_blank(line) and para and _is_blank(para[-1]):
+            yield ''.join(para)
+            para = [line]
+        else:
+            para.append(line)
+    if para:
+        yield ''.join(para)
+
+def _is_blank(line: str) -> bool:
+    return line in ('\n', '\r', '\r\n')
+
+_EOL_RGX2 = r'(?:\r\n|\r(?!\n)|\n)'
+_EOPARA_RGX = re.compile(fr'\A{_EOL_RGX2}+|{_EOL_RGX2}{{2,}}')
+
+def split_paragraphs(s: str) -> List[str]:
+    """
+    .. versionadded:: 0.3.0
+
+    Split a string into paragraphs, each one terminated by one or more blank
+    lines (i.e., lines containining only a line ending).  Trailing and embedded
+    line endings in each paragraph are retained.
+
+    Only LF, CR LF, and CR are recognized as line endings.
+    """
+    return split_terminated(s, _EOPARA_RGX, retain=True)

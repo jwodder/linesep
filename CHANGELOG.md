@@ -1,6 +1,7 @@
 v0.3.0 (in development)
 -----------------------
-- Added `ascii_splitlines()` function
+- Added `ascii_splitlines()`, `read_paragraphs()`, and `split_paragraphs()`
+  functions
 
 v0.2.0 (2020-11-28)
 -------------------
