@@ -5,9 +5,7 @@ def pytest_generate_tests(metafunc):
     argvalues = []
     for scenario in metafunc.module.scenarios:
         idlist.append(scenario[0])
-        argvalues.append(
-            [scenario[1][argname] for argname in metafunc.fixturenames]
-        )
+        argvalues.append([scenario[1][argname] for argname in metafunc.fixturenames])
     metafunc.parametrize(
         metafunc.fixturenames,
         argvalues,

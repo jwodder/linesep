@@ -8,11 +8,11 @@ the segments they separate.
 Visit <https://github.com/jwodder/linesep> for more information.
 """
 
-__version__      = '0.3.0'
-__author__       = 'John Thorvald Wodder II'
-__author_email__ = 'linesep@varonathe.org'
-__license__      = 'MIT'
-__url__          = 'https://github.com/jwodder/linesep'
+__version__ = "0.3.0"
+__author__ = "John Thorvald Wodder II"
+__author_email__ = "linesep@varonathe.org"
+__license__ = "MIT"
+__url__ = "https://github.com/jwodder/linesep"
 
 __all__ = [
     "ascii_splitlines",
@@ -34,14 +34,16 @@ __all__ = [
 
 import re
 import sys
-from   typing import AnyStr, IO, Union
+from typing import AnyStr, IO, Union
 
-if sys.version_info[:2] >= (3,9):
+if sys.version_info[:2] >= (3, 9):
     from collections.abc import Iterable, Iterator
     from re import Pattern
+
     List = list
 else:
     from typing import Iterable, Iterator, List, Pattern
+
 
 def read_preceded(
     fp: IO[AnyStr],
@@ -79,6 +81,7 @@ def read_preceded(
     for e in entries:
         yield e
 
+
 def read_separated(
     fp: IO[AnyStr],
     sep: Union[AnyStr, Pattern[AnyStr]],
@@ -113,12 +116,13 @@ def read_separated(
         buff += chunk
         lastend = 0
         for m in seppattern.finditer(buff):
-            yield buff[lastend:m.start()]
+            yield buff[lastend : m.start()]
             if retain:
                 yield m.group()
             lastend = m.end()
         buff = buff[lastend:]
     yield buff
+
 
 def read_terminated(
     fp: IO[AnyStr],
@@ -158,6 +162,7 @@ def read_terminated(
     if prev:
         yield prev
 
+
 def split_preceded(
     s: AnyStr,
     sep: Union[AnyStr, Pattern[AnyStr]],
@@ -183,6 +188,7 @@ def split_preceded(
         entries.pop(0)
     return entries
 
+
 def split_separated(
     s: AnyStr,
     sep: Union[AnyStr, Pattern[AnyStr]],
@@ -206,12 +212,13 @@ def split_separated(
     entries = []
     lastend = 0
     for m in seppattern.finditer(s):
-        entries.append(s[lastend:m.start()])
+        entries.append(s[lastend : m.start()])
         if retain:
             entries.append(m.group())
         lastend = m.end()
     entries.append(s[lastend:])
     return entries
+
 
 def split_terminated(
     s: AnyStr,
@@ -238,6 +245,7 @@ def split_terminated(
         entries.pop()
     return entries
 
+
 def join_preceded(iterable: Iterable[AnyStr], sep: AnyStr) -> AnyStr:
     """
     Join the elements of ``iterable`` together, preceding each one with ``sep``
@@ -247,6 +255,7 @@ def join_preceded(iterable: Iterable[AnyStr], sep: AnyStr) -> AnyStr:
     :rtype: a binary or text string
     """
     return sep[0:0].join(sep + s for s in iterable)
+
 
 def join_separated(iterable: Iterable[AnyStr], sep: AnyStr) -> AnyStr:
     """
@@ -259,6 +268,7 @@ def join_separated(iterable: Iterable[AnyStr], sep: AnyStr) -> AnyStr:
     """
     return sep.join(iterable)
 
+
 def join_terminated(iterable: Iterable[AnyStr], sep: AnyStr) -> AnyStr:
     """
     Join the elements of ``iterable`` together, appending ``sep`` to each one
@@ -268,6 +278,7 @@ def join_terminated(iterable: Iterable[AnyStr], sep: AnyStr) -> AnyStr:
     :rtype: a binary or text string
     """
     return sep[0:0].join(s + sep for s in iterable)
+
 
 def write_preceded(fp: IO[AnyStr], iterable: Iterable[AnyStr], sep: AnyStr) -> None:
     """
@@ -282,6 +293,7 @@ def write_preceded(fp: IO[AnyStr], iterable: Iterable[AnyStr], sep: AnyStr) -> N
     for s in iterable:
         fp.write(sep)
         fp.write(s)
+
 
 def write_separated(fp: IO[AnyStr], iterable: Iterable[AnyStr], sep: AnyStr) -> None:
     """
@@ -301,6 +313,7 @@ def write_separated(fp: IO[AnyStr], iterable: Iterable[AnyStr], sep: AnyStr) -> 
             fp.write(sep)
         fp.write(s)
 
+
 def write_terminated(fp: IO[AnyStr], iterable: Iterable[AnyStr], sep: AnyStr) -> None:
     """
     Write the elements of ``iterable`` to the filehandle ``fp``, appending
@@ -314,6 +327,7 @@ def write_terminated(fp: IO[AnyStr], iterable: Iterable[AnyStr], sep: AnyStr) ->
     for s in iterable:
         fp.write(s)
         fp.write(sep)
+
 
 def _join_pairs(iterable: Iterable[AnyStr]) -> Iterator[AnyStr]:
     """
@@ -331,13 +345,16 @@ def _join_pairs(iterable: Iterable[AnyStr]) -> Iterator[AnyStr]:
         else:
             yield a + b
 
+
 def _ensure_compiled(sep: Union[AnyStr, Pattern[AnyStr]]) -> Pattern[AnyStr]:
     if isinstance(sep, (bytes, str)):
         return re.compile(re.escape(sep))
     else:
         return sep
 
-_EOL_RGX = re.compile(r'\r\n?|\n')
+
+_EOL_RGX = re.compile(r"\r\n?|\n")
+
 
 def ascii_splitlines(s: str, keepends: bool = False) -> List[str]:
     """
@@ -350,13 +367,14 @@ def ascii_splitlines(s: str, keepends: bool = False) -> List[str]:
     lastend = 0
     for m in _EOL_RGX.finditer(s):
         if keepends:
-            lines.append(s[lastend:m.end()])
+            lines.append(s[lastend : m.end()])
         else:
-            lines.append(s[lastend:m.start()])
+            lines.append(s[lastend : m.start()])
         lastend = m.end()
     if lastend < len(s):
         lines.append(s[lastend:])
     return lines
+
 
 def read_paragraphs(fp: Iterable[str]) -> Iterable[str]:
     """
@@ -372,18 +390,21 @@ def read_paragraphs(fp: Iterable[str]) -> Iterable[str]:
     para: List[str] = []
     for line in fp:
         if not _is_blank(line) and para and _is_blank(para[-1]):
-            yield ''.join(para)
+            yield "".join(para)
             para = [line]
         else:
             para.append(line)
     if para:
-        yield ''.join(para)
+        yield "".join(para)
+
 
 def _is_blank(line: str) -> bool:
-    return line in ('\n', '\r', '\r\n')
+    return line in ("\n", "\r", "\r\n")
 
-_EOL_RGX2 = r'(?:\r\n|\r(?!\n)|\n)'
-_EOPARA_RGX = re.compile(fr'\A{_EOL_RGX2}+|{_EOL_RGX2}{{2,}}')
+
+_EOL_RGX2 = r"(?:\r\n|\r(?!\n)|\n)"
+_EOPARA_RGX = re.compile(fr"\A{_EOL_RGX2}+|{_EOL_RGX2}{{2,}}")
+
 
 def split_paragraphs(s: str) -> List[str]:
     """
