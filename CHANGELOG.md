@@ -1,3 +1,7 @@
+v0.4.0 (in development)
+-----------------------
+- Support Python 3.10
+
 v0.3.0 (2020-12-02)
 -------------------
 - Added `ascii_splitlines()`, `read_paragraphs()`, and `split_paragraphs()`
