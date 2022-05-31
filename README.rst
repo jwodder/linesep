@@ -272,7 +272,7 @@ endings.
 
 .. code:: python
 
-    linesep.read_paragraphs(fp: Iterable[str]) -> Iterable[str]
+    linesep.read_paragraphs(fp: Iterable[str]) -> Iterator[str]
 
 *New in version 0.3.0*
 

@@ -8,7 +8,7 @@ the segments they separate.
 Visit <https://github.com/jwodder/linesep> for more information.
 """
 
-__version__ = "0.4.0.dev1"
+__version__ = "0.3.1.dev1"
 __author__ = "John Thorvald Wodder II"
 __author_email__ = "linesep@varonathe.org"
 __license__ = "MIT"
@@ -376,7 +376,7 @@ def ascii_splitlines(s: str, keepends: bool = False) -> List[str]:
     return lines
 
 
-def read_paragraphs(fp: Iterable[str]) -> Iterable[str]:
+def read_paragraphs(fp: Iterable[str]) -> Iterator[str]:
     """
     .. versionadded:: 0.3.0
 
@@ -403,7 +403,7 @@ def _is_blank(line: str) -> bool:
 
 
 _EOL_RGX2 = r"(?:\r\n|\r(?!\n)|\n)"
-_EOPARA_RGX = re.compile(fr"\A{_EOL_RGX2}+|{_EOL_RGX2}{{2,}}")
+_EOPARA_RGX = re.compile(rf"\A{_EOL_RGX2}+|{_EOL_RGX2}{{2,}}")
 
 
 def split_paragraphs(s: str) -> List[str]:

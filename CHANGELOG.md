@@ -1,6 +1,7 @@
-v0.4.0 (in development)
+v0.3.1 (in development)
 -----------------------
 - Support Python 3.10
+- Refine return type annotation on `read_paragraphs()`
 
 v0.3.0 (2020-12-02)
 -------------------
