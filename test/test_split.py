@@ -1,7 +1,7 @@
 from pathlib import Path
 import re
 import sys
-from typing import AnyStr, IO, Iterator, List, Pattern, Union
+from typing import AnyStr, IO, Iterator, List, Pattern, Union, cast
 import pytest
 from pytest_subtests import SubTests
 from linesep import (
@@ -300,6 +300,18 @@ SCENARIOS = {
             " sunt in culpa qui officia|\r\n",
             "| deserunt mollit anim id est laborum.",
         ],
+    },
+    "empty_sep": {
+        "text": "This is test text.",
+        "sep": "",
+        "preceded": [*"This is test text.", ""],
+        "terminated": ["", *"This is test text."],
+        "separated": ["", *"This is test text.", ""],
+        "preceded_retained": [*"This is test text.", ""],
+        "terminated_retained": ["", *"This is test text."],
+        "separated_retained": [""]
+        + sum([["", c] for c in "This is test text."], cast(List[str], []))
+        + ["", ""],
     },
 }
 
