@@ -80,7 +80,9 @@ binary or all text, and the return type will match.
 **Note**: Using the ``read_*`` functions with a variable-length regular
 expression is unreliable.  The only truly foolproof way to split on such
 regexes is to first read the whole file into memory and then call one of the
-``split_*`` functions.
+``split_*`` functions.  As a result, passing a regular expression separator to
+a ``read_*`` function is deprecated starting in version 0.4.0, and support for
+this will be removed in version 1.0.
 
 Note the following about how the different types of delimiters are handled at
 the beginning & end of input:

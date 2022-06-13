@@ -398,9 +398,11 @@ def test_split_regex(
         with p.open("w", encoding="utf-8", newline="") as fp:
             fp.write(text)
         with p.open(encoding="utf-8", newline="") as fp:
-            assert list(reader(fp, textrgx, retain=retain)) == splitvals
+            with pytest.deprecated_call():
+                assert list(reader(fp, textrgx, retain=retain)) == splitvals
     with subtests.test("read-bytes"):
         p = tmp_path / "bytes"
         p.write_bytes(text.encode("utf-8"))
         with p.open("rb") as fp:
-            assert list(reader(fp, bytesrgx, retain=retain)) == splitbytes
+            with pytest.deprecated_call():
+                assert list(reader(fp, bytesrgx, retain=retain)) == splitbytes

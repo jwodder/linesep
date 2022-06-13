@@ -8,7 +8,7 @@ the segments they separate.
 Visit <https://github.com/jwodder/linesep> for more information.
 """
 
-__version__ = "0.3.1"
+__version__ = "0.4.0.dev1"
 __author__ = "John Thorvald Wodder II"
 __author_email__ = "linesep@varonathe.org"
 __license__ = "MIT"
@@ -35,6 +35,7 @@ __all__ = [
 import re
 import sys
 from typing import AnyStr, IO, Union
+from warnings import warn
 
 if sys.version_info[:2] >= (3, 9):
     from collections.abc import Iterable, Iterator
@@ -60,6 +61,11 @@ def read_preceded(
     Data is read from the filehandle ``chunk_size`` characters at a time.  If
     ``sep`` is a variable-length compiled regex and a delimiter in the file
     crosses a chunk boundary, the results are undefined.
+
+    .. deprecated:: 0.4.0
+
+        Passing a regular expression as a separator is deprecated, and support
+        will be removed in version 1.0.
 
     :param fp: a binary or text file-like object
     :param sep: a string or compiled regex that indicates the start of a new
@@ -98,6 +104,11 @@ def read_separated(
     ``sep`` is a variable-length compiled regex and a delimiter in the file
     crosses a chunk boundary, the results are undefined.
 
+    .. deprecated:: 0.4.0
+
+        Passing a regular expression as a separator is deprecated, and support
+        will be removed in version 1.0.
+
     :param fp: a binary or text file-like object
     :param sep: a string or compiled regex that indicates the end of one
         segment and the beginning of another wherever it occurs
@@ -109,6 +120,12 @@ def read_separated(
     :return: a generator of the segments in ``fp``
     :rtype: generator of binary or text strings
     """
+    if not isinstance(sep, (bytes, str)):
+        warn(
+            "Passing a regular expression separator to a read_*() function is"
+            " deprecated and will be removed in v1.0",
+            DeprecationWarning,
+        )
     seppattern = _ensure_compiled(sep)
     empty = fp.read(0)  # b'' or u'' as appropriate
     buff = empty
@@ -139,6 +156,11 @@ def read_terminated(
     Data is read from the filehandle ``chunk_size`` characters at a time.  If
     ``sep`` is a variable-length compiled regex and a delimiter in the file
     crosses a chunk boundary, the results are undefined.
+
+    .. deprecated:: 0.4.0
+
+        Passing a regular expression as a separator is deprecated, and support
+        will be removed in version 1.0.
 
     :param fp: a binary or text file-like object
     :param sep: a string or compiled regex that indicates the end of a segment
