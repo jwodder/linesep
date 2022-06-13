@@ -1,6 +1,7 @@
 from pathlib import Path
 import re
-from typing import AnyStr, IO, Iterator, List, Pattern, Protocol, Union
+import sys
+from typing import AnyStr, IO, Iterator, List, Pattern, Union
 import pytest
 from pytest_subtests import SubTests
 from linesep import (
@@ -11,6 +12,11 @@ from linesep import (
     split_separated,
     split_terminated,
 )
+
+if sys.version_info[:2] >= (3, 8):
+    from typing import Protocol
+else:
+    from typing_extensions import Protocol
 
 SCENARIOS = {
     "empty": {
