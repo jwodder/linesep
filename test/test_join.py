@@ -1,4 +1,7 @@
+from pathlib import Path
+from typing import AnyStr, Callable, IO, Iterable, List
 import pytest
+from pytest_subtests import SubTests
 from linesep import (
     join_preceded,
     join_separated,
@@ -51,6 +54,9 @@ SCENARIOS = [
     ),
 ]
 
+Joiner = Callable[[Iterable[AnyStr], AnyStr], AnyStr]
+Writer = Callable[[IO[AnyStr], Iterable[AnyStr], AnyStr], None]
+
 
 @pytest.mark.parametrize(
     "joiner,writer,entries,sep,joined",
@@ -64,7 +70,15 @@ SCENARIOS = [
         ]
     ],
 )
-def test_join(subtests, joiner, writer, entries, sep, joined, tmp_path):
+def test_join(
+    subtests: SubTests,
+    joiner: Joiner,
+    writer: Writer,
+    entries: List[str],
+    sep: str,
+    joined: str,
+    tmp_path: Path,
+) -> None:
     bentries = [e.encode("utf-8") for e in entries]
     with subtests.test("join-str"):
         assert joiner(entries, sep) == joined

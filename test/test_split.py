@@ -1,5 +1,8 @@
+from pathlib import Path
 import re
+from typing import AnyStr, IO, Iterator, List, Pattern, Protocol, Union
 import pytest
+from pytest_subtests import SubTests
 from linesep import (
     read_preceded,
     read_separated,
@@ -295,6 +298,27 @@ SCENARIOS = {
 }
 
 
+class Splitter(Protocol):
+    def __call__(
+        self,
+        s: AnyStr,
+        sep: Union[AnyStr, Pattern[AnyStr]],
+        retain: bool = False,
+    ) -> List[AnyStr]:
+        ...
+
+
+class Reader(Protocol):
+    def __call__(
+        self,
+        fp: IO[AnyStr],
+        sep: Union[AnyStr, Pattern[AnyStr]],
+        retain: bool = False,
+        chunk_size: int = 512,
+    ) -> Iterator[AnyStr]:
+        ...
+
+
 @pytest.mark.parametrize(
     "splitter,reader,text,sep,splitvals,retain",
     [
@@ -316,7 +340,16 @@ SCENARIOS = {
         for retain, suffix in [(False, ""), (True, "_retained")]
     ],
 )
-def test_split(subtests, splitter, reader, text, sep, splitvals, retain, tmp_path):
+def test_split(
+    subtests: SubTests,
+    splitter: Splitter,
+    reader: Reader,
+    text: str,
+    sep: str,
+    splitvals: List[str],
+    retain: bool,
+    tmp_path: Path,
+) -> None:
     splitbytes = [e.encode("utf-8") for e in splitvals]
     with subtests.test("split-str"):
         assert splitter(text, sep, retain=retain) == splitvals
@@ -384,8 +417,15 @@ REGEX_SCENARIOS = {
     ],
 )
 def test_split_regex(
-    subtests, splitter, reader, text, sep, splitvals, retain, tmp_path
-):
+    subtests: SubTests,
+    splitter: Splitter,
+    reader: Reader,
+    text: str,
+    sep: str,
+    splitvals: List[str],
+    retain: bool,
+    tmp_path: Path,
+) -> None:
     textrgx = re.compile(sep)
     bytesrgx = re.compile(sep.encode("utf-8"))
     splitbytes = [e.encode("utf-8") for e in splitvals]
