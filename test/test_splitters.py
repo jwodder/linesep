@@ -2,10 +2,10 @@ from typing import List, Type
 import pytest
 from pytest_subtests import SubTests
 from linesep import (
-    EmptySplitterError,
     PrecededSplitter,
     SeparatedSplitter,
     SplitterClosedError,
+    SplitterEmptyError,
     TerminatedSplitter,
 )
 from linesep.splitters import ConstantSplitter
@@ -257,7 +257,7 @@ def test_feed_get() -> None:
     assert splitter.get() == "bar"
     assert not splitter.nonempty
     assert not splitter.closed  # type: ignore[unreachable]
-    with pytest.raises(EmptySplitterError) as excinfo:
+    with pytest.raises(SplitterEmptyError) as excinfo:
         splitter.get()
     assert str(excinfo.value) == "No items available in splitter"
     assert not splitter.nonempty

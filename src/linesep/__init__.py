@@ -33,19 +33,19 @@ from .funcs import (
 )
 from .splitters import (
     AbstractSplitter,
-    EmptySplitterError,
     PrecededSplitter,
     SeparatedSplitter,
     SplitterClosedError,
+    SplitterEmptyError,
     TerminatedSplitter,
 )
 
 __all__ = [
     "AbstractSplitter",
-    "EmptySplitterError",
     "PrecededSplitter",
     "SeparatedSplitter",
     "SplitterClosedError",
+    "SplitterEmptyError",
     "TerminatedSplitter",
     "ascii_splitlines",
     "join_preceded",

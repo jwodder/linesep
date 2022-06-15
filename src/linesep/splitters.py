@@ -59,7 +59,7 @@ class AbstractSplitter(ABC, Generic[AnyStr]):
         try:
             return self._items.popleft()
         except IndexError:
-            raise EmptySplitterError("No items available in splitter")
+            raise SplitterEmptyError("No items available in splitter")
 
     def getall(self) -> List[AnyStr]:
         items = list(self._items)
@@ -146,5 +146,5 @@ class SplitterClosedError(ValueError):
     pass
 
 
-class EmptySplitterError(Exception):
+class SplitterEmptyError(Exception):
     pass
