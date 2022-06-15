@@ -5,7 +5,7 @@ from linesep import (
     EmptySplitterError,
     PrecededSplitter,
     SeparatedSplitter,
-    SplitterEndedError,
+    SplitterClosedError,
     TerminatedSplitter,
 )
 from linesep.splitters import ConstantSplitter
@@ -78,13 +78,13 @@ def test_terminated_splitter(
         splitter = TerminatedSplitter(sep, retain=retain)
         for x, y in zip(inputs, outputs):
             assert splitter.process(x) == y
-        splitter.end()
+        splitter.close()
         assert splitter.getall() == endput
     with subtests.test("bytes"):
         bsplitter = TerminatedSplitter(sep.encode("utf-8"), retain=retain)
         for x, y in zip(inputs, outputs):
             assert bsplitter.process(x.encode("utf-8")) == encode_list(y)
-        bsplitter.end()
+        bsplitter.close()
         assert bsplitter.getall() == encode_list(endput)
 
 
@@ -151,13 +151,13 @@ def test_preceded_splitter(
         splitter = PrecededSplitter(sep, retain=retain)
         for x, y in zip(inputs, outputs):
             assert splitter.process(x) == y
-        splitter.end()
+        splitter.close()
         assert splitter.getall() == endput
     with subtests.test("bytes"):
         bsplitter = PrecededSplitter(sep.encode("utf-8"), retain=retain)
         for x, y in zip(inputs, outputs):
             assert bsplitter.process(x.encode("utf-8")) == encode_list(y)
-        bsplitter.end()
+        bsplitter.close()
         assert bsplitter.getall() == encode_list(endput)
 
 
@@ -224,13 +224,13 @@ def test_separated_splitter(
         splitter = SeparatedSplitter(sep, retain=retain)
         for x, y in zip(inputs, outputs):
             assert splitter.process(x) == y
-        splitter.end()
+        splitter.close()
         assert splitter.getall() == endput
     with subtests.test("bytes"):
         bsplitter = SeparatedSplitter(sep.encode("utf-8"), retain=retain)
         for x, y in zip(inputs, outputs):
             assert bsplitter.process(x.encode("utf-8")) == encode_list(y)
-        bsplitter.end()
+        bsplitter.close()
         assert bsplitter.getall() == encode_list(endput)
 
 
@@ -248,32 +248,32 @@ def test_empty_sep(klass: Type[ConstantSplitter]) -> None:
 
 def test_feed_get() -> None:
     splitter = TerminatedSplitter("\0")
-    assert not splitter.ended
+    assert not splitter.closed
     splitter.feed("foo\0bar\0baz")
-    assert not splitter.ended
+    assert not splitter.closed
     assert splitter.has_next
     assert splitter.get() == "foo"
     assert splitter.has_next
     assert splitter.get() == "bar"
     assert not splitter.has_next
-    assert not splitter.ended  # type: ignore[unreachable]
+    assert not splitter.closed  # type: ignore[unreachable]
     with pytest.raises(EmptySplitterError) as excinfo:
         splitter.get()
     assert str(excinfo.value) == "No items available in splitter"
     assert not splitter.has_next
-    assert not splitter.ended
-    splitter.end()
-    assert splitter.ended
+    assert not splitter.closed
+    splitter.close()
+    assert splitter.closed
     assert splitter.has_next
-    splitter.end()
-    assert splitter.ended
+    splitter.close()
+    assert splitter.closed
     assert splitter.has_next
     assert splitter.get() == "baz"
     assert not splitter.has_next
-    with pytest.raises(SplitterEndedError) as excinfo:
+    with pytest.raises(SplitterClosedError) as excinfo:
         splitter.feed("extra")
-    assert str(excinfo.value) == "Cannot feed data to splitter after calling end()"
-    assert splitter.ended
+    assert str(excinfo.value) == "Cannot feed data to closed splitter"
+    assert splitter.closed
     assert not splitter.has_next
 
 

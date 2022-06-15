@@ -7,10 +7,10 @@ class AbstractSplitter(ABC, Generic[AnyStr]):
     def __init__(self) -> None:
         self._items: Deque[AnyStr] = deque()
         self._buff: Optional[AnyStr] = None
-        self._ended: bool = False
+        self._closed: bool = False
 
     @abstractmethod
-    def _find_separator(self, data: AnyStr, end: bool) -> Optional[Tuple[int, int]]:
+    def _find_separator(self, data: AnyStr, closed: bool) -> Optional[Tuple[int, int]]:
         ...
 
     @abstractmethod
@@ -29,29 +29,29 @@ class AbstractSplitter(ABC, Generic[AnyStr]):
         self._items.append(self._items.pop() + item)
 
     def feed(self, data: AnyStr) -> None:
-        if self._ended:
-            raise SplitterEndedError("Cannot feed data to splitter after calling end()")
+        if self._closed:
+            raise SplitterClosedError("Cannot feed data to closed splitter")
         if self._buff is None:
             self._buff = data
         else:
             self._buff += data
         self._split()
 
-    def end(self) -> None:
-        self._ended = True
+    def close(self) -> None:
+        self._closed = True
         if self._buff is not None:
             self._split()
 
     def _split(self) -> None:
         while self._buff:
-            span = self._find_separator(self._buff, end=self._ended)
+            span = self._find_separator(self._buff, closed=self._closed)
             if span is None:
                 break
             start, end = span
             self._append_item(self._buff[:start])
             self._append_separator(self._buff[start:end])
             self._buff = self._buff[end:]
-        if self._ended and self._buff is not None:
+        if self._closed and self._buff is not None:
             self._append_item(self._buff, final=True)
             self._buff = None
 
@@ -69,7 +69,7 @@ class AbstractSplitter(ABC, Generic[AnyStr]):
     def process(self, data: AnyStr, final: bool = False) -> List[AnyStr]:
         self.feed(data)
         if final:
-            self.end()
+            self.close()
         return self.getall()
 
     @property
@@ -77,8 +77,8 @@ class AbstractSplitter(ABC, Generic[AnyStr]):
         return bool(self._items)
 
     @property
-    def ended(self) -> bool:
-        return self._ended
+    def closed(self) -> bool:
+        return self._closed
 
 
 class ConstantSplitter(AbstractSplitter[AnyStr]):
@@ -90,7 +90,7 @@ class ConstantSplitter(AbstractSplitter[AnyStr]):
         self._retain: bool = retain
 
     def _find_separator(
-        self, data: AnyStr, end: bool  # noqa: U100
+        self, data: AnyStr, closed: bool  # noqa: U100
     ) -> Optional[Tuple[int, int]]:
         try:
             i = data.index(self._separator)
@@ -144,7 +144,7 @@ class PrecededSplitter(ConstantSplitter[AnyStr]):
             self._itembuf = item
 
 
-class SplitterEndedError(ValueError):
+class SplitterClosedError(ValueError):
     pass
 
 
