@@ -10,7 +10,7 @@ class AbstractSplitter(ABC, Generic[AnyStr]):
         self._closed: bool = False
 
     @abstractmethod
-    def _find_separator(self, data: AnyStr, closed: bool) -> Optional[Tuple[int, int]]:
+    def _find_separator(self, data: AnyStr) -> Optional[Tuple[int, int]]:
         ...
 
     @abstractmethod
@@ -44,7 +44,7 @@ class AbstractSplitter(ABC, Generic[AnyStr]):
 
     def _split(self) -> None:
         while self._buff:
-            span = self._find_separator(self._buff, closed=self._closed)
+            span = self._find_separator(self._buff)
             if span is None:
                 break
             start, end = span
@@ -89,9 +89,7 @@ class ConstantSplitter(AbstractSplitter[AnyStr]):
         self._separator: AnyStr = separator
         self._retain: bool = retain
 
-    def _find_separator(
-        self, data: AnyStr, closed: bool  # noqa: U100
-    ) -> Optional[Tuple[int, int]]:
+    def _find_separator(self, data: AnyStr) -> Optional[Tuple[int, int]]:
         try:
             i = data.index(self._separator)
         except ValueError:
