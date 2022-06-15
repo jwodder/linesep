@@ -31,8 +31,22 @@ from .funcs import (
     write_separated,
     write_terminated,
 )
+from .splitters import (
+    AbstractSplitter,
+    EmptySplitterError,
+    PrecededSplitter,
+    SeparatedSplitter,
+    SplitterEndedError,
+    TerminatedSplitter,
+)
 
 __all__ = [
+    "AbstractSplitter",
+    "EmptySplitterError",
+    "PrecededSplitter",
+    "SeparatedSplitter",
+    "SplitterEndedError",
+    "TerminatedSplitter",
     "ascii_splitlines",
     "join_preceded",
     "join_separated",
