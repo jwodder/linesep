@@ -7,6 +7,7 @@ class AbstractSplitter(ABC, Generic[AnyStr]):
     def __init__(self) -> None:
         self._items: Deque[AnyStr] = deque()
         self._buff: Optional[AnyStr] = None
+        self._hold: Optional[AnyStr] = None
         self._closed: bool = False
 
     @abstractmethod
@@ -23,10 +24,6 @@ class AbstractSplitter(ABC, Generic[AnyStr]):
 
     def _append(self, item: AnyStr) -> None:
         self._items.append(item)
-
-    def _suffix(self, item: AnyStr) -> None:
-        # Append `item` to the last element of `_items`
-        self._items.append(self._items.pop() + item)
 
     def feed(self, data: AnyStr) -> None:
         if self._closed:
@@ -101,11 +98,17 @@ class ConstantSplitter(AbstractSplitter[AnyStr]):
 class TerminatedSplitter(ConstantSplitter[AnyStr]):
     def _append_item(self, item: AnyStr, final: bool = False) -> None:
         if not final or item:
-            self._append(item)
+            if self._retain and not final:
+                assert self._hold is None
+                self._hold = item
+            else:
+                self._append(item)
 
     def _append_separator(self, item: AnyStr) -> None:
         if self._retain:
-            self._suffix(item)
+            assert self._hold is not None
+            self._append(self._hold + item)
+            self._hold = None
 
 
 class SeparatedSplitter(ConstantSplitter[AnyStr]):
@@ -122,7 +125,6 @@ class PrecededSplitter(ConstantSplitter[AnyStr]):
         # <https://github.com/python/mypy/issues/12984>
         super().__init__(separator, retain)  # type: ignore[arg-type]
         self._first: bool = True
-        self._itembuf: Optional[AnyStr] = None
 
     def _append_item(self, item: AnyStr, final: bool = False) -> None:  # noqa: U100
         if self._first:
@@ -130,16 +132,16 @@ class PrecededSplitter(ConstantSplitter[AnyStr]):
                 self._append(item)
             self._first = False
         elif self._retain:
-            assert self._itembuf is not None
-            self._append(self._itembuf + item)
-            self._itembuf = None
+            assert self._hold is not None
+            self._append(self._hold + item)
+            self._hold = None
         else:
             self._append(item)
 
     def _append_separator(self, item: AnyStr) -> None:
         if self._retain:
-            assert self._itembuf is None
-            self._itembuf = item
+            assert self._hold is None
+            self._hold = item
 
 
 class SplitterClosedError(ValueError):
