@@ -9,13 +9,16 @@ class AbstractSplitter(ABC, Generic[AnyStr]):
         self._buff: Optional[AnyStr] = None
         self._hold: Optional[AnyStr] = None
         self._closed: bool = False
+        self._first: bool = True
 
     @abstractmethod
     def _find_separator(self, data: AnyStr) -> Optional[Tuple[int, int]]:
         ...
 
     @abstractmethod
-    def _append_item(self, item: AnyStr, final: bool = False) -> None:
+    def _append_item(
+        self, item: AnyStr, first: bool = False, last: bool = False
+    ) -> None:
         ...
 
     @abstractmethod
@@ -45,11 +48,12 @@ class AbstractSplitter(ABC, Generic[AnyStr]):
             if span is None:
                 break
             start, end = span
-            self._append_item(self._buff[:start])
+            self._append_item(self._buff[:start], first=self._first)
+            self._first = False
             self._append_separator(self._buff[start:end])
             self._buff = self._buff[end:]
         if self._closed and self._buff is not None:
-            self._append_item(self._buff, final=True)
+            self._append_item(self._buff, first=self._first, last=True)
             self._buff = None
 
     def get(self) -> AnyStr:
@@ -96,9 +100,11 @@ class ConstantSplitter(AbstractSplitter[AnyStr]):
 
 
 class TerminatedSplitter(ConstantSplitter[AnyStr]):
-    def _append_item(self, item: AnyStr, final: bool = False) -> None:
-        if not final or item:
-            if self._retain and not final:
+    def _append_item(
+        self, item: AnyStr, first: bool = False, last: bool = False  # noqa: U100
+    ) -> None:
+        if not last or item:
+            if self._retain and not last:
                 assert self._hold is None
                 self._hold = item
             else:
@@ -112,7 +118,9 @@ class TerminatedSplitter(ConstantSplitter[AnyStr]):
 
 
 class SeparatedSplitter(ConstantSplitter[AnyStr]):
-    def _append_item(self, item: AnyStr, final: bool = False) -> None:  # noqa: U100
+    def _append_item(
+        self, item: AnyStr, first: bool = False, last: bool = False  # noqa: U100
+    ) -> None:
         self._append(item)
 
     def _append_separator(self, item: AnyStr) -> None:
@@ -121,16 +129,12 @@ class SeparatedSplitter(ConstantSplitter[AnyStr]):
 
 
 class PrecededSplitter(ConstantSplitter[AnyStr]):
-    def __init__(self, separator: AnyStr, retain: bool = False) -> None:
-        # <https://github.com/python/mypy/issues/12984>
-        super().__init__(separator, retain)  # type: ignore[arg-type]
-        self._first: bool = True
-
-    def _append_item(self, item: AnyStr, final: bool = False) -> None:  # noqa: U100
-        if self._first:
+    def _append_item(
+        self, item: AnyStr, first: bool = False, last: bool = False  # noqa: U100
+    ) -> None:
+        if first:
             if item:
                 self._append(item)
-            self._first = False
         elif self._retain:
             assert self._hold is not None
             self._append(self._hold + item)
