@@ -73,7 +73,7 @@ class AbstractSplitter(ABC, Generic[AnyStr]):
         return self.getall()
 
     @property
-    def has_next(self) -> bool:
+    def nonempty(self) -> bool:
         return bool(self._items)
 
     @property

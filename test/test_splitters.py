@@ -251,35 +251,35 @@ def test_feed_get() -> None:
     assert not splitter.closed
     splitter.feed("foo\0bar\0baz")
     assert not splitter.closed
-    assert splitter.has_next
+    assert splitter.nonempty
     assert splitter.get() == "foo"
-    assert splitter.has_next
+    assert splitter.nonempty
     assert splitter.get() == "bar"
-    assert not splitter.has_next
+    assert not splitter.nonempty
     assert not splitter.closed  # type: ignore[unreachable]
     with pytest.raises(EmptySplitterError) as excinfo:
         splitter.get()
     assert str(excinfo.value) == "No items available in splitter"
-    assert not splitter.has_next
+    assert not splitter.nonempty
     assert not splitter.closed
     splitter.close()
     assert splitter.closed
-    assert splitter.has_next
+    assert splitter.nonempty
     splitter.close()
     assert splitter.closed
-    assert splitter.has_next
+    assert splitter.nonempty
     assert splitter.get() == "baz"
-    assert not splitter.has_next
+    assert not splitter.nonempty
     with pytest.raises(SplitterClosedError) as excinfo:
         splitter.feed("extra")
     assert str(excinfo.value) == "Cannot feed data to closed splitter"
     assert splitter.closed
-    assert not splitter.has_next
+    assert not splitter.nonempty
 
 
 def test_process_final() -> None:
     splitter = TerminatedSplitter("\0")
     assert splitter.process("\0abc\0def\0gh") == ["", "abc", "def"]
     assert splitter.process("i\0jkl\0mno\0", final=True) == ["ghi", "jkl", "mno"]
-    assert not splitter.has_next
+    assert not splitter.nonempty
     assert splitter.getall() == []
