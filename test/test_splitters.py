@@ -77,13 +77,13 @@ def test_terminated_splitter(
     with subtests.test("str"):
         splitter = TerminatedSplitter(sep, retain=retain)
         for x, y in zip(inputs, outputs):
-            assert splitter.process(x) == y
+            assert splitter.split(x) == y
         splitter.close()
         assert splitter.getall() == endput
     with subtests.test("bytes"):
         bsplitter = TerminatedSplitter(sep.encode("utf-8"), retain=retain)
         for x, y in zip(inputs, outputs):
-            assert bsplitter.process(x.encode("utf-8")) == encode_list(y)
+            assert bsplitter.split(x.encode("utf-8")) == encode_list(y)
         bsplitter.close()
         assert bsplitter.getall() == encode_list(endput)
 
@@ -150,13 +150,13 @@ def test_preceded_splitter(
     with subtests.test("str"):
         splitter = PrecededSplitter(sep, retain=retain)
         for x, y in zip(inputs, outputs):
-            assert splitter.process(x) == y
+            assert splitter.split(x) == y
         splitter.close()
         assert splitter.getall() == endput
     with subtests.test("bytes"):
         bsplitter = PrecededSplitter(sep.encode("utf-8"), retain=retain)
         for x, y in zip(inputs, outputs):
-            assert bsplitter.process(x.encode("utf-8")) == encode_list(y)
+            assert bsplitter.split(x.encode("utf-8")) == encode_list(y)
         bsplitter.close()
         assert bsplitter.getall() == encode_list(endput)
 
@@ -223,13 +223,13 @@ def test_separated_splitter(
     with subtests.test("str"):
         splitter = SeparatedSplitter(sep, retain=retain)
         for x, y in zip(inputs, outputs):
-            assert splitter.process(x) == y
+            assert splitter.split(x) == y
         splitter.close()
         assert splitter.getall() == endput
     with subtests.test("bytes"):
         bsplitter = SeparatedSplitter(sep.encode("utf-8"), retain=retain)
         for x, y in zip(inputs, outputs):
-            assert bsplitter.process(x.encode("utf-8")) == encode_list(y)
+            assert bsplitter.split(x.encode("utf-8")) == encode_list(y)
         bsplitter.close()
         assert bsplitter.getall() == encode_list(endput)
 
@@ -277,9 +277,9 @@ def test_feed_get() -> None:
     assert not splitter.nonempty
 
 
-def test_process_final() -> None:
+def test_split_final() -> None:
     splitter = TerminatedSplitter("\0")
-    assert splitter.process("\0abc\0def\0gh") == ["", "abc", "def"]
-    assert splitter.process("i\0jkl\0mno\0", final=True) == ["ghi", "jkl", "mno"]
+    assert splitter.split("\0abc\0def\0gh") == ["", "abc", "def"]
+    assert splitter.split("i\0jkl\0mno\0", final=True) == ["ghi", "jkl", "mno"]
     assert not splitter.nonempty
     assert splitter.getall() == []

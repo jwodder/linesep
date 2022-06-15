@@ -66,7 +66,7 @@ class AbstractSplitter(ABC, Generic[AnyStr]):
         self._items.clear()
         return items
 
-    def process(self, data: AnyStr, final: bool = False) -> List[AnyStr]:
+    def split(self, data: AnyStr, final: bool = False) -> List[AnyStr]:
         self.feed(data)
         if final:
             self.close()
