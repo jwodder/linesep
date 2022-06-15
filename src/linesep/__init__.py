@@ -32,7 +32,6 @@ from .funcs import (
     write_terminated,
 )
 from .splitters import (
-    AbstractSplitter,
     PrecededSplitter,
     SeparatedSplitter,
     SplitterClosedError,
@@ -41,7 +40,6 @@ from .splitters import (
 )
 
 __all__ = [
-    "AbstractSplitter",
     "PrecededSplitter",
     "SeparatedSplitter",
     "SplitterClosedError",
