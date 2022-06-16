@@ -37,6 +37,7 @@ from .splitters import (
     SplitterClosedError,
     SplitterEmptyError,
     TerminatedSplitter,
+    UniversalNewlineSplitter,
 )
 
 __all__ = [
@@ -45,6 +46,7 @@ __all__ = [
     "SplitterClosedError",
     "SplitterEmptyError",
     "TerminatedSplitter",
+    "UniversalNewlineSplitter",
     "ascii_splitlines",
     "join_preceded",
     "join_separated",

@@ -7,6 +7,7 @@ from linesep import (
     SplitterClosedError,
     SplitterEmptyError,
     TerminatedSplitter,
+    UniversalNewlineSplitter,
 )
 from linesep.splitters import ConstantSplitter
 
@@ -337,3 +338,65 @@ def test_split_final() -> None:
     assert splitter.split("i\0jkl\0mno\0", final=True) == ["ghi", "jkl", "mno"]
     assert not splitter.nonempty
     assert splitter.getall() == []
+
+
+@pytest.mark.parametrize(
+    "retain,translate,inputs,outputs,endput",
+    [
+        (False, False, [], [[]], []),
+        (True, False, [], [[]], []),
+        (False, False, [""], [[]], []),
+        (True, False, [""], [[]], []),
+        (False, False, ["foo\n"], [["foo"]], []),
+        (False, False, ["foo\r\n"], [["foo"]], []),
+        (False, False, ["foo\r"], [[]], ["foo"]),
+        (False, False, ["foo\r", "bar"], [[], ["foo"]], ["bar"]),
+        (False, False, ["foo\r", "\nbar"], [[], ["foo"]], ["bar"]),
+        (False, False, ["foo\rbar"], [["foo"]], ["bar"]),
+        (False, False, ["foo\r\nbar"], [["foo"]], ["bar"]),
+        (False, False, ["foo\r\n\nbar"], [["foo", ""]], ["bar"]),
+        (False, False, ["foo\r\n\r\nbar"], [["foo", ""]], ["bar"]),
+        (True, False, ["foo\n"], [["foo\n"]], []),
+        (True, False, ["foo\r\n"], [["foo\r\n"]], []),
+        (True, False, ["foo\r"], [[]], ["foo\r"]),
+        (True, False, ["foo\r", "bar"], [[], ["foo\r"]], ["bar"]),
+        (True, False, ["foo\r", "\nbar"], [[], ["foo\r\n"]], ["bar"]),
+        (True, False, ["foo\rbar"], [["foo\r"]], ["bar"]),
+        (True, False, ["foo\r\nbar"], [["foo\r\n"]], ["bar"]),
+        (True, False, ["foo\r\n\nbar"], [["foo\r\n", "\n"]], ["bar"]),
+        (True, False, ["foo\r\n\r\nbar"], [["foo\r\n", "\r\n"]], ["bar"]),
+        (True, True, ["foo\n"], [["foo\n"]], []),
+        (True, True, ["foo\r\n"], [["foo\n"]], []),
+        (True, True, ["foo\r"], [[]], ["foo\n"]),
+        (True, True, ["foo\r", "bar"], [[], ["foo\n"]], ["bar"]),
+        (True, True, ["foo\r", "\nbar"], [[], ["foo\n"]], ["bar"]),
+        (True, True, ["foo\rbar"], [["foo\n"]], ["bar"]),
+        (True, True, ["foo\r\nbar"], [["foo\n"]], ["bar"]),
+        (True, True, ["foo\r\n\nbar"], [["foo\n", "\n"]], ["bar"]),
+        (True, True, ["foo\r\n\r\nbar"], [["foo\n", "\n"]], ["bar"]),
+    ],
+)
+def test_universal_newline_splitter(
+    subtests: SubTests,
+    retain: bool,
+    translate: bool,
+    inputs: list[str],
+    outputs: list[list[str]],
+    endput: list[str],
+) -> None:
+    with subtests.test("str"):
+        splitter: UniversalNewlineSplitter[str] = UniversalNewlineSplitter(
+            retain=retain, translate=translate
+        )
+        for x, y in zip(inputs, outputs):
+            assert splitter.split(x) == y
+        splitter.close()
+        assert splitter.getall() == endput
+    with subtests.test("bytes"):
+        bsplitter: UniversalNewlineSplitter[bytes] = UniversalNewlineSplitter(
+            retain=retain, translate=translate
+        )
+        for x, y in zip(inputs, outputs):
+            assert bsplitter.split(x.encode("utf-8")) == encode_list(y)
+        bsplitter.close()
+        assert bsplitter.getall() == encode_list(endput)

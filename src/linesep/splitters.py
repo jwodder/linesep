@@ -1,6 +1,8 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
 from collections import deque
+from dataclasses import dataclass
+import re
 from typing import AnyStr, Generic, Optional
 
 
@@ -149,9 +151,61 @@ class PrecededSplitter(ConstantSplitter[AnyStr]):
             self._hold = item
 
 
+class UniversalNewlineSplitter(AbstractSplitter[AnyStr]):
+    def __init__(self, retain: bool = False, translate: bool = True) -> None:
+        super().__init__()
+        self._retain = retain
+        self._translate = translate
+        self._strs: Optional[NewlineStrs[AnyStr]] = None
+
+    def _find_separator(self, data: AnyStr) -> Optional[tuple[int, int]]:
+        if self._strs is None:
+            if isinstance(data, str):
+                self._strs = NewlineStrs(
+                    regex=re.compile(r"\r\n?|\n"), CR="\r", LF="\n"
+                )
+            else:
+                self._strs = NewlineStrs(
+                    regex=re.compile(rb"\r\n?|\n"), CR=b"\r", LF=b"\n"
+                )
+        m = self._strs.regex.search(data)
+        if m and not (
+            m.group() == self._strs.CR and m.end() == len(data) and not self.closed
+        ):
+            return m.span()
+        else:
+            return None
+
+    def _append_item(
+        self, item: AnyStr, first: bool = False, last: bool = False  # noqa: U100
+    ) -> None:
+        if not last or item:
+            if self._retain and not last:
+                assert self._hold is None
+                self._hold = item
+            else:
+                self._append(item)
+
+    def _append_separator(self, item: AnyStr) -> None:
+        if self._retain:
+            if self._translate:
+                assert self._strs is not None
+                item = self._strs.LF
+            assert self._hold is not None
+            self._append(self._hold + item)
+            self._hold = None
+
+
 class SplitterClosedError(ValueError):
     pass
 
 
 class SplitterEmptyError(Exception):
     pass
+
+
+@dataclass
+class NewlineStrs(Generic[AnyStr]):
+    regex: re.Pattern[AnyStr]
+    CR: AnyStr
+    LF: AnyStr
