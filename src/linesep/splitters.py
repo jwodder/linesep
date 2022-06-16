@@ -1,6 +1,7 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
 from collections import deque
+from collections.abc import AsyncIterable, AsyncIterator, Iterable, Iterator
 from dataclasses import dataclass
 import re
 import sys
@@ -44,6 +45,18 @@ class Splitter(Protocol[AnyStr]):
 
     def setstate(self, state: SplitterState[AnyStr]) -> None:
         ...
+
+    def itersplit(self, iterable: Iterable[AnyStr]) -> Iterator[AnyStr]:
+        ...
+
+    async def aitersplit(
+        self, aiterable: AsyncIterable[AnyStr]
+    ) -> AsyncIterator[AnyStr]:  # pragma: no cover
+        # Due to <https://github.com/python/mypy/issues/5070>, we need a
+        # "yield" in here.
+        raise NotImplementedError
+        async for s in aiterable:
+            yield s
 
 
 class AbstractSplitter(ABC, Generic[AnyStr]):
@@ -147,6 +160,32 @@ class AbstractSplitter(ABC, Generic[AnyStr]):
         self._hold = state.hold
         self._closed = state.closed
         self._first = state.first
+
+    def itersplit(self, iterable: Iterable[AnyStr]) -> Iterator[AnyStr]:
+        st = self.getstate()
+        self.reset()
+        try:
+            for s in iterable:
+                yield from self.split(s)
+            self.close()
+            yield from self.getall()
+        finally:
+            self.setstate(st)
+
+    async def aitersplit(
+        self, aiterable: AsyncIterable[AnyStr]
+    ) -> AsyncIterator[AnyStr]:
+        st = self.getstate()
+        self.reset()
+        try:
+            async for s in aiterable:
+                for t in self.split(s):
+                    yield t
+            self.close()
+            for t in self.getall():
+                yield t
+        finally:
+            self.setstate(st)
 
 
 class ConstantSplitter(AbstractSplitter[AnyStr]):

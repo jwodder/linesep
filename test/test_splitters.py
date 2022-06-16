@@ -1,5 +1,7 @@
 from __future__ import annotations
-from typing import Optional
+from collections.abc import AsyncIterator
+import sys
+from typing import Optional, TypeVar
 import pytest
 from pytest_subtests import SubTests
 from linesep import (
@@ -12,6 +14,12 @@ from linesep import (
     get_newline_splitter,
 )
 from linesep.splitters import ConstantSplitter
+
+if sys.version_info[:2] < (3, 10):
+    T = TypeVar("T")
+
+    async def anext(obj: AsyncIterator[T]) -> T:
+        return await obj.__anext__()
 
 
 def encode_list(txt: list[str]) -> list[bytes]:
@@ -490,3 +498,35 @@ def test_getstate_setstate_get_some() -> None:
     splitter.close()
     assert splitter.getall() == ["bar", "baz", "gnusto", "cleesh"]
     assert splitter.getall() == []
+
+
+def test_itersplit() -> None:
+    splitter = TerminatedSplitter("\0")
+    it = splitter.itersplit(["foo\0bar", "baz\0quux\0", "\0gnusto\0cleesh"])
+    assert next(it) == "foo"
+    assert next(it) == "barbaz"
+    assert next(it) == "quux"
+    assert next(it) == ""
+    assert next(it) == "gnusto"
+    assert next(it) == "cleesh"
+    with pytest.raises(StopIteration):
+        next(it)
+
+
+@pytest.mark.asyncio
+async def test_aitersplit() -> None:
+    async def ayielder() -> AsyncIterator[str]:
+        yield "foo\0bar"
+        yield "baz\0quux\0"
+        yield "\0gnusto\0cleesh"
+
+    splitter = TerminatedSplitter("\0")
+    ait = splitter.aitersplit(ayielder())
+    assert await anext(ait) == "foo"
+    assert await anext(ait) == "barbaz"
+    assert await anext(ait) == "quux"
+    assert await anext(ait) == ""
+    assert await anext(ait) == "gnusto"
+    assert await anext(ait) == "cleesh"
+    with pytest.raises(StopAsyncIteration):
+        await anext(ait)
