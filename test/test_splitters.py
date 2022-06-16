@@ -430,3 +430,63 @@ def test_get_newline_separator_bad_newline(newline: str) -> None:
     with pytest.raises(ValueError) as excinfo:
         get_newline_splitter(newline)
     assert str(excinfo.value) == f"Invalid 'newline' value: {newline!r}"
+
+
+def test_reset() -> None:
+    splitter = TerminatedSplitter("\0", retain=True)
+    assert splitter.split("foo\0bar") == ["foo\0"]
+    assert splitter.split("baz\0quux\0", final=True) == ["barbaz\0", "quux\0"]
+    splitter.reset()
+    assert splitter.split("baz\0quux\0", final=True) == ["baz\0", "quux\0"]
+
+
+def test_getstate_setstate() -> None:
+    splitter = TerminatedSplitter("\0", retain=True)
+    assert splitter.split("foo\0bar") == ["foo\0"]
+    st = splitter.getstate()
+    assert splitter.split("baz\0quux\0", final=True) == ["barbaz\0", "quux\0"]
+    splitter.setstate(st)
+    assert splitter.split("\0baz\0quux\0", final=True) == ["bar\0", "baz\0", "quux\0"]
+
+
+def test_getstate_setstate_closed() -> None:
+    splitter = TerminatedSplitter("\0", retain=True)
+    splitter.close()
+    st = splitter.getstate()
+    splitter.reset()
+    assert splitter.split("foo\0bar") == ["foo\0"]
+    splitter.setstate(st)
+    with pytest.raises(SplitterClosedError):
+        splitter.feed("baz\0")
+
+
+def test_getstate_setstate_first_preceded() -> None:
+    splitter = PrecededSplitter("\0", retain=True)
+    assert splitter.split("\0") == []
+    st = splitter.getstate()
+    assert splitter.split("foo\0bar", final=True) == ["\0foo", "\0bar"]
+    splitter.setstate(st)
+    assert splitter.split("\0quux", final=True) == ["\0", "\0quux"]
+
+
+def test_reset_first_preceded() -> None:
+    splitter = PrecededSplitter("\0", retain=True)
+    assert splitter.split("\0") == []
+    splitter.reset()
+    assert splitter.split("\0bar", final=True) == ["\0bar"]
+
+
+def test_getstate_setstate_get_some() -> None:
+    splitter = SeparatedSplitter("\0")
+    splitter.feed("foo\0bar\0baz")
+    assert splitter.get() == "foo"
+    st = splitter.getstate()
+    splitter.feed("quux\0glarch")
+    splitter.close()
+    assert splitter.getall() == ["bar", "bazquux", "glarch"]
+    assert splitter.getall() == []
+    splitter.setstate(st)
+    splitter.feed("\0gnusto\0cleesh")
+    splitter.close()
+    assert splitter.getall() == ["bar", "baz", "gnusto", "cleesh"]
+    assert splitter.getall() == []

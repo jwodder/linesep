@@ -36,6 +36,15 @@ class Splitter(Protocol[AnyStr]):
     def closed(self) -> bool:
         ...
 
+    def reset(self) -> None:
+        ...
+
+    def getstate(self) -> SplitterState[AnyStr]:
+        ...
+
+    def setstate(self, state: SplitterState[AnyStr]) -> None:
+        ...
+
 
 class AbstractSplitter(ABC, Generic[AnyStr]):
     def __init__(self) -> None:
@@ -114,6 +123,30 @@ class AbstractSplitter(ABC, Generic[AnyStr]):
     @property
     def closed(self) -> bool:
         return self._closed
+
+    def reset(self) -> None:
+        self._items.clear()
+        self._buff = None
+        self._hold = None
+        self._closed = False
+        self._first = True
+
+    def getstate(self) -> SplitterState[AnyStr]:
+        return SplitterState(
+            items=list(self._items),
+            buff=self._buff,
+            hold=self._hold,
+            closed=self._closed,
+            first=self._first,
+        )
+
+    def setstate(self, state: SplitterState[AnyStr]) -> None:
+        self._items.clear()
+        self._items.extend(state.items)
+        self._buff = state.buff
+        self._hold = state.hold
+        self._closed = state.closed
+        self._first = state.first
 
 
 class ConstantSplitter(AbstractSplitter[AnyStr]):
@@ -253,3 +286,12 @@ class NewlineStrs(Generic[AnyStr]):
     regex: re.Pattern[AnyStr]
     CR: AnyStr
     LF: AnyStr
+
+
+@dataclass(repr=False)
+class SplitterState(Generic[AnyStr]):
+    items: list[AnyStr]
+    buff: Optional[AnyStr]
+    hold: Optional[AnyStr]
+    closed: bool
+    first: bool
