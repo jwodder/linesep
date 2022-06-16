@@ -2,9 +2,9 @@ v0.4.0 (in development)
 -----------------------
 - Passing a regular expression separator to a `read_*()` function is now
   deprecated, and support will be removed in version 1.0.
-- Added `TerminatedSplitter`, `PrecededSplitter`, `SeparatedSplitter`, and
-  `UniversalNewlineSplitter` classes for incremental splitting of strings in
-  chunks
+- Added `TerminatedSplitter`, `PrecededSplitter`, `SeparatedSplitter`, &
+  `UniversalNewlineSplitter` classes and `get_newline_splitter()` function for
+  incremental splitting of strings in chunks
 - Drop support for Python 3.6
 
 v0.3.1 (2022-05-31)

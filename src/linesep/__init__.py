@@ -34,20 +34,24 @@ from .funcs import (
 from .splitters import (
     PrecededSplitter,
     SeparatedSplitter,
+    Splitter,
     SplitterClosedError,
     SplitterEmptyError,
     TerminatedSplitter,
     UniversalNewlineSplitter,
+    get_newline_splitter,
 )
 
 __all__ = [
     "PrecededSplitter",
     "SeparatedSplitter",
+    "Splitter",
     "SplitterClosedError",
     "SplitterEmptyError",
     "TerminatedSplitter",
     "UniversalNewlineSplitter",
     "ascii_splitlines",
+    "get_newline_splitter",
     "join_preceded",
     "join_separated",
     "join_terminated",

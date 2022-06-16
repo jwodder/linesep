@@ -3,7 +3,38 @@ from abc import ABC, abstractmethod
 from collections import deque
 from dataclasses import dataclass
 import re
+import sys
 from typing import AnyStr, Generic, Optional
+
+if sys.version_info[:2] >= (3, 8):
+    from typing import Protocol
+else:
+    from typing_extensions import Protocol
+
+
+class Splitter(Protocol[AnyStr]):
+    def feed(self, data: AnyStr) -> None:
+        ...
+
+    def close(self) -> None:
+        ...
+
+    def get(self) -> AnyStr:
+        ...
+
+    def getall(self) -> list[AnyStr]:
+        ...
+
+    def split(self, data: AnyStr, final: bool = False) -> list[AnyStr]:
+        ...
+
+    @property
+    def nonempty(self) -> bool:
+        ...
+
+    @property
+    def closed(self) -> bool:
+        ...
 
 
 class AbstractSplitter(ABC, Generic[AnyStr]):
@@ -194,6 +225,19 @@ class UniversalNewlineSplitter(AbstractSplitter[AnyStr]):
             assert self._hold is not None
             self._append(self._hold + item)
             self._hold = None
+
+
+def get_newline_splitter(
+    newline: Optional[str] = None, retain: bool = False
+) -> Splitter[str]:
+    if newline is None:
+        return UniversalNewlineSplitter(retain=retain, translate=True)
+    elif newline == "":
+        return UniversalNewlineSplitter(retain=retain, translate=False)
+    elif newline in ("\n", "\r\n", "\r"):
+        return TerminatedSplitter(newline, retain=retain)
+    else:
+        raise ValueError(f"Invalid 'newline' value: {newline!r}")
 
 
 class SplitterClosedError(ValueError):

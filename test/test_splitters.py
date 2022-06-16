@@ -1,4 +1,5 @@
 from __future__ import annotations
+from typing import Optional
 import pytest
 from pytest_subtests import SubTests
 from linesep import (
@@ -8,6 +9,7 @@ from linesep import (
     SplitterEmptyError,
     TerminatedSplitter,
     UniversalNewlineSplitter,
+    get_newline_splitter,
 )
 from linesep.splitters import ConstantSplitter
 
@@ -400,3 +402,31 @@ def test_universal_newline_splitter(
             assert bsplitter.split(x.encode("utf-8")) == encode_list(y)
         bsplitter.close()
         assert bsplitter.getall() == encode_list(endput)
+
+
+@pytest.mark.parametrize(
+    "newline,retain,outputs",
+    [
+        (None, False, ["fee", "fie", "foe", "foo"]),
+        (None, True, ["fee\n", "fie\n", "foe\n", "foo\n"]),
+        ("", True, ["fee\n", "fie\r", "foe\r\n", "foo\n"]),
+        ("\n", False, ["fee", "fie\rfoe\r", "foo"]),
+        ("\n", True, ["fee\n", "fie\rfoe\r\n", "foo\n"]),
+        ("\r", False, ["fee\nfie", "foe", "\nfoo\n"]),
+        ("\r", True, ["fee\nfie\r", "foe\r", "\nfoo\n"]),
+        ("\r\n", False, ["fee\nfie\rfoe", "foo\n"]),
+        ("\r\n", True, ["fee\nfie\rfoe\r\n", "foo\n"]),
+    ],
+)
+def test_get_newline_splitter(
+    newline: Optional[str], retain: bool, outputs: list[str]
+) -> None:
+    splitter = get_newline_splitter(newline, retain=retain)
+    assert splitter.split("fee\nfie\rfoe\r\nfoo\n", final=True) == outputs
+
+
+@pytest.mark.parametrize("newline", ["\0", "\v", "\f", "\x85", "\u2028"])
+def test_get_newline_separator_bad_newline(newline: str) -> None:
+    with pytest.raises(ValueError) as excinfo:
+        get_newline_splitter(newline)
+    assert str(excinfo.value) == f"Invalid 'newline' value: {newline!r}"
