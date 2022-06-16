@@ -312,7 +312,7 @@ SCENARIOS = {
         "preceded_retained": [*"This is test text.", ""],
         "terminated_retained": ["", *"This is test text."],
         "separated_retained": [""]
-        # We need to use typing.List here:
+        # We need to use typing.List here for pre-Python 3.9 compatibility:
         + sum([["", c] for c in "This is test text."], cast(List[str], [])) + ["", ""],
     },
 }
