@@ -1,11 +1,13 @@
+from __future__ import annotations
+from collections.abc import Iterable, Iterator
 import re
-from typing import AnyStr, IO, Iterable, Iterator, List, Pattern, Union
+from typing import AnyStr, IO
 from warnings import warn
 
 
 def read_preceded(
     fp: IO[AnyStr],
-    sep: Union[AnyStr, Pattern[AnyStr]],
+    sep: AnyStr | re.Pattern[AnyStr],
     retain: bool = False,
     chunk_size: int = 512,
 ) -> Iterator[AnyStr]:
@@ -47,7 +49,7 @@ def read_preceded(
 
 def read_separated(
     fp: IO[AnyStr],
-    sep: Union[AnyStr, Pattern[AnyStr]],
+    sep: AnyStr | re.Pattern[AnyStr],
     retain: bool = False,
     chunk_size: int = 512,
 ) -> Iterator[AnyStr]:
@@ -100,7 +102,7 @@ def read_separated(
 
 def read_terminated(
     fp: IO[AnyStr],
-    sep: Union[AnyStr, Pattern[AnyStr]],
+    sep: AnyStr | re.Pattern[AnyStr],
     retain: bool = False,
     chunk_size: int = 512,
 ) -> Iterator[AnyStr]:
@@ -144,9 +146,9 @@ def read_terminated(
 
 def split_preceded(
     s: AnyStr,
-    sep: Union[AnyStr, Pattern[AnyStr]],
+    sep: AnyStr | re.Pattern[AnyStr],
     retain: bool = False,
-) -> List[AnyStr]:
+) -> list[AnyStr]:
     """
     Split a string ``s`` into zero or more segments starting with/preceded by
     the string or compiled regex ``sep``.  A list of segments is returned; an
@@ -170,9 +172,9 @@ def split_preceded(
 
 def split_separated(
     s: AnyStr,
-    sep: Union[AnyStr, Pattern[AnyStr]],
+    sep: AnyStr | re.Pattern[AnyStr],
     retain: bool = False,
-) -> List[AnyStr]:
+) -> list[AnyStr]:
     """
     Split a string ``s`` into one or more segments separated by the string or
     compiled regex ``sep``.  A list of segments is returned; an empty input
@@ -201,9 +203,9 @@ def split_separated(
 
 def split_terminated(
     s: AnyStr,
-    sep: Union[AnyStr, Pattern[AnyStr]],
+    sep: AnyStr | re.Pattern[AnyStr],
     retain: bool = False,
-) -> List[AnyStr]:
+) -> list[AnyStr]:
     """
     Split a string ``s`` into zero or more segments terminated by the
     string or compiled regex ``sep``.  A list of segments is returned; an empty
@@ -325,7 +327,7 @@ def _join_pairs(iterable: Iterable[AnyStr]) -> Iterator[AnyStr]:
             yield a + b
 
 
-def _ensure_compiled(sep: Union[AnyStr, Pattern[AnyStr]]) -> Pattern[AnyStr]:
+def _ensure_compiled(sep: AnyStr | re.Pattern[AnyStr]) -> re.Pattern[AnyStr]:
     if isinstance(sep, (bytes, str)):
         return re.compile(re.escape(sep))
     else:
@@ -335,7 +337,7 @@ def _ensure_compiled(sep: Union[AnyStr, Pattern[AnyStr]]) -> Pattern[AnyStr]:
 _EOL_RGX = re.compile(r"\r\n?|\n")
 
 
-def ascii_splitlines(s: str, keepends: bool = False) -> List[str]:
+def ascii_splitlines(s: str, keepends: bool = False) -> list[str]:
     """
     .. versionadded:: 0.3.0
 
@@ -366,7 +368,7 @@ def read_paragraphs(fp: Iterable[str]) -> Iterator[str]:
 
     Only LF, CR LF, and CR are recognized as line endings.
     """
-    para: List[str] = []
+    para: list[str] = []
     for line in fp:
         if not _is_blank(line) and para and _is_blank(para[-1]):
             yield "".join(para)
@@ -385,7 +387,7 @@ _EOL_RGX2 = r"(?:\r\n|\r(?!\n)|\n)"
 _EOPARA_RGX = re.compile(rf"\A{_EOL_RGX2}+|{_EOL_RGX2}{{2,}}")
 
 
-def split_paragraphs(s: str) -> List[str]:
+def split_paragraphs(s: str) -> list[str]:
     """
     .. versionadded:: 0.3.0
 

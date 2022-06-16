@@ -1,5 +1,7 @@
+from __future__ import annotations
+from collections.abc import Callable, Iterable
 from pathlib import Path
-from typing import AnyStr, Callable, IO, Iterable, List
+from typing import AnyStr, IO
 import pytest
 from pytest_subtests import SubTests
 from linesep import (
@@ -74,7 +76,7 @@ def test_join(
     subtests: SubTests,
     joiner: Joiner,
     writer: Writer,
-    entries: List[str],
+    entries: list[str],
     sep: str,
     joined: str,
     tmp_path: Path,

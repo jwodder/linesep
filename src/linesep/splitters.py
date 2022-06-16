@@ -1,18 +1,19 @@
+from __future__ import annotations
 from abc import ABC, abstractmethod
 from collections import deque
-from typing import AnyStr, Deque, Generic, List, Optional, Tuple
+from typing import AnyStr, Generic, Optional
 
 
 class AbstractSplitter(ABC, Generic[AnyStr]):
     def __init__(self) -> None:
-        self._items: Deque[AnyStr] = deque()
+        self._items: deque[AnyStr] = deque()
         self._buff: Optional[AnyStr] = None
         self._hold: Optional[AnyStr] = None
         self._closed: bool = False
         self._first: bool = True
 
     @abstractmethod
-    def _find_separator(self, data: AnyStr) -> Optional[Tuple[int, int]]:
+    def _find_separator(self, data: AnyStr) -> Optional[tuple[int, int]]:
         ...
 
     @abstractmethod
@@ -62,12 +63,12 @@ class AbstractSplitter(ABC, Generic[AnyStr]):
         except IndexError:
             raise SplitterEmptyError("No items available in splitter")
 
-    def getall(self) -> List[AnyStr]:
+    def getall(self) -> list[AnyStr]:
         items = list(self._items)
         self._items.clear()
         return items
 
-    def split(self, data: AnyStr, final: bool = False) -> List[AnyStr]:
+    def split(self, data: AnyStr, final: bool = False) -> list[AnyStr]:
         self.feed(data)
         if final:
             self.close()
@@ -90,7 +91,7 @@ class ConstantSplitter(AbstractSplitter[AnyStr]):
         self._separator: AnyStr = separator
         self._retain: bool = retain
 
-    def _find_separator(self, data: AnyStr) -> Optional[Tuple[int, int]]:
+    def _find_separator(self, data: AnyStr) -> Optional[tuple[int, int]]:
         try:
             i = data.index(self._separator)
         except ValueError:

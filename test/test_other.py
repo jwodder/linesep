@@ -1,5 +1,5 @@
+from __future__ import annotations
 from io import StringIO
-from typing import List
 import pytest
 from linesep import ascii_splitlines, read_paragraphs, split_paragraphs
 
@@ -29,7 +29,7 @@ from linesep import ascii_splitlines, read_paragraphs, split_paragraphs
         ),
     ],
 )
-def test_ascii_splitlines(s: str, lines: List[str]) -> None:
+def test_ascii_splitlines(s: str, lines: list[str]) -> None:
     assert ascii_splitlines(s) == lines
 
 
@@ -58,7 +58,7 @@ def test_ascii_splitlines(s: str, lines: List[str]) -> None:
         ),
     ],
 )
-def test_ascii_splitlines_keepends(s: str, lines: List[str]) -> None:
+def test_ascii_splitlines_keepends(s: str, lines: list[str]) -> None:
     assert ascii_splitlines(s, keepends=True) == lines
 
 
@@ -125,10 +125,10 @@ TEXT_PARAGRAPHS = [
 
 
 @pytest.mark.parametrize("txt,paras", TEXT_PARAGRAPHS)
-def test_read_paragraphs(txt: str, paras: List[str]) -> None:
+def test_read_paragraphs(txt: str, paras: list[str]) -> None:
     assert list(read_paragraphs(StringIO(txt, newline=""))) == paras
 
 
 @pytest.mark.parametrize("txt,paras", TEXT_PARAGRAPHS)
-def test_split_paragraphs(txt: str, paras: List[str]) -> None:
+def test_split_paragraphs(txt: str, paras: list[str]) -> None:
     assert split_paragraphs(txt) == paras

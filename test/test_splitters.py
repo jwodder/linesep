@@ -1,4 +1,4 @@
-from typing import List, Type
+from __future__ import annotations
 import pytest
 from pytest_subtests import SubTests
 from linesep import (
@@ -11,7 +11,7 @@ from linesep import (
 from linesep.splitters import ConstantSplitter
 
 
-def encode_list(txt: List[str]) -> List[bytes]:
+def encode_list(txt: list[str]) -> list[bytes]:
     return [s.encode("utf-8") for s in txt]
 
 
@@ -88,9 +88,9 @@ def test_terminated_splitter(
     subtests: SubTests,
     sep: str,
     retain: bool,
-    inputs: List[str],
-    outputs: List[List[str]],
-    endput: List[str],
+    inputs: list[str],
+    outputs: list[list[str]],
+    endput: list[str],
 ) -> None:
     with subtests.test("str"):
         splitter = TerminatedSplitter(sep, retain=retain)
@@ -179,9 +179,9 @@ def test_preceded_splitter(
     subtests: SubTests,
     sep: str,
     retain: bool,
-    inputs: List[str],
-    outputs: List[List[str]],
-    endput: List[str],
+    inputs: list[str],
+    outputs: list[list[str]],
+    endput: list[str],
 ) -> None:
     with subtests.test("str"):
         splitter = PrecededSplitter(sep, retain=retain)
@@ -270,9 +270,9 @@ def test_separated_splitter(
     subtests: SubTests,
     sep: str,
     retain: bool,
-    inputs: List[str],
-    outputs: List[List[str]],
-    endput: List[str],
+    inputs: list[str],
+    outputs: list[list[str]],
+    endput: list[str],
 ) -> None:
     with subtests.test("str"):
         splitter = SeparatedSplitter(sep, retain=retain)
@@ -291,7 +291,7 @@ def test_separated_splitter(
 @pytest.mark.parametrize(
     "klass", [PrecededSplitter, SeparatedSplitter, TerminatedSplitter]
 )
-def test_empty_sep(klass: Type[ConstantSplitter]) -> None:
+def test_empty_sep(klass: type[ConstantSplitter]) -> None:
     with pytest.raises(ValueError) as excinfo:
         klass("")
     assert str(excinfo.value) == "Separator cannot be empty"

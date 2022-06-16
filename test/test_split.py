@@ -1,7 +1,9 @@
+from __future__ import annotations
+from collections.abc import Iterator
 from pathlib import Path
 import re
 import sys
-from typing import AnyStr, IO, Iterator, List, Pattern, Union, cast
+from typing import AnyStr, IO, List, cast
 import pytest
 from pytest_subtests import SubTests
 from linesep import (
@@ -310,8 +312,8 @@ SCENARIOS = {
         "preceded_retained": [*"This is test text.", ""],
         "terminated_retained": ["", *"This is test text."],
         "separated_retained": [""]
-        + sum([["", c] for c in "This is test text."], cast(List[str], []))
-        + ["", ""],
+        # We need to use typing.List here:
+        + sum([["", c] for c in "This is test text."], cast(List[str], [])) + ["", ""],
     },
 }
 
@@ -320,9 +322,9 @@ class Splitter(Protocol):
     def __call__(
         self,
         s: AnyStr,
-        sep: Union[AnyStr, Pattern[AnyStr]],
+        sep: AnyStr | re.Pattern[AnyStr],
         retain: bool = False,
-    ) -> List[AnyStr]:
+    ) -> list[AnyStr]:
         ...
 
 
@@ -330,7 +332,7 @@ class Reader(Protocol):
     def __call__(
         self,
         fp: IO[AnyStr],
-        sep: Union[AnyStr, Pattern[AnyStr]],
+        sep: AnyStr | re.Pattern[AnyStr],
         retain: bool = False,
         chunk_size: int = 512,
     ) -> Iterator[AnyStr]:
@@ -364,7 +366,7 @@ def test_split(
     reader: Reader,
     text: str,
     sep: str,
-    splitvals: List[str],
+    splitvals: list[str],
     retain: bool,
     tmp_path: Path,
 ) -> None:
@@ -440,7 +442,7 @@ def test_split_regex(
     reader: Reader,
     text: str,
     sep: str,
-    splitvals: List[str],
+    splitvals: list[str],
     retain: bool,
     tmp_path: Path,
 ) -> None:
