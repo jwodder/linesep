@@ -4,6 +4,7 @@ v0.4.0 (in development)
   deprecated, and support will be removed in version 1.0.
 - Added `TerminatedSplitter`, `PrecededSplitter`, and `SeparatedSplitter`
   classes for incremental splitting of strings in chunks
+- Drop support for Python 3.6
 
 v0.3.1 (2022-05-31)
 -------------------
