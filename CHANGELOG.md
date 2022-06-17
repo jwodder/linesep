@@ -1,5 +1,5 @@
-v0.4.0 (in development)
------------------------
+v0.4.0 (2022-06-17)
+-------------------
 - Passing a regular expression separator to a `read_*()` function is now
   deprecated, and support will be removed in version 1.0.
 - Added `TerminatedSplitter`, `PrecededSplitter`, `SeparatedSplitter`, &
