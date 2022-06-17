@@ -1,27 +1,22 @@
-.. image:: http://www.repostatus.org/badges/latest/active.svg
-    :target: http://www.repostatus.org/#active
-    :alt: Project Status: Active — The project has reached a stable, usable
-          state and is being actively developed.
+.. module:: linesep
 
-.. image:: https://github.com/jwodder/linesep/workflows/Test/badge.svg?branch=master
-    :target: https://github.com/jwodder/linesep/actions?workflow=Test
-    :alt: CI Status
-
-.. image:: https://codecov.io/gh/jwodder/linesep/branch/master/graph/badge.svg
-    :target: https://codecov.io/gh/jwodder/linesep
-
-.. image:: https://img.shields.io/pypi/pyversions/linesep.svg
-    :target: https://pypi.org/project/linesep
-
-.. image:: https://img.shields.io/github/license/jwodder/linesep.svg
-    :target: https://opensource.org/licenses/MIT
-    :alt: MIT License
+==================================================
+linesep — Handling lines with arbitrary separators
+==================================================
 
 `GitHub <https://github.com/jwodder/linesep>`_
-| `PyPI <https://pypi.org/project/linesep>`_
+| `PyPI <https://pypi.org/project/linesep/>`_
 | `Documentation <https://linesep.readthedocs.io>`_
 | `Issues <https://github.com/jwodder/linesep/issues>`_
-| `Changelog <https://github.com/jwodder/linesep/blob/master/CHANGELOG.md>`_
+| :doc:`Changelog <changelog>`
+
+.. toctree::
+    :hidden:
+
+    core
+    splitters
+    misc
+    changelog
 
 ``linesep`` provides basic functions for reading, writing, splitting, & joining
 text with custom separators that can occur either before, between, or after the
@@ -68,3 +63,9 @@ A poor man's `JSON Text Sequence <https://tools.ietf.org/html/rfc7464>`_ parser:
             pass
         else:
             yield obj
+
+
+Indices and tables
+==================
+* :ref:`genindex`
+* :ref:`search`

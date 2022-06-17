@@ -18,7 +18,7 @@ def read_preceded(
     generator.
 
     Data is read from the filehandle ``chunk_size`` characters at a time.  If
-    ``sep`` is a variable-length compiled regex and a delimiter in the file
+    ``sep`` is a variable-length compiled regex and a separator in the file
     crosses a chunk boundary, the results are undefined.
 
     .. deprecated:: 0.4.0
@@ -29,7 +29,7 @@ def read_preceded(
     :param fp: a binary or text file-like object
     :param sep: a string or compiled regex that indicates the start of a new
         segment wherever it occurs
-    :param bool retain: whether to include the delimiters at the beginning of
+    :param bool retain: whether to include the separators at the beginning of
         each segment
     :param int chunk_size: how many bytes or characters to read from ``fp`` at
         a time
@@ -60,7 +60,7 @@ def read_separated(
     element, the empty string.
 
     Data is read from the filehandle ``chunk_size`` characters at a time.  If
-    ``sep`` is a variable-length compiled regex and a delimiter in the file
+    ``sep`` is a variable-length compiled regex and a separator in the file
     crosses a chunk boundary, the results are undefined.
 
     .. deprecated:: 0.4.0
@@ -113,7 +113,7 @@ def read_terminated(
     generator.
 
     Data is read from the filehandle ``chunk_size`` characters at a time.  If
-    ``sep`` is a variable-length compiled regex and a delimiter in the file
+    ``sep`` is a variable-length compiled regex and a separator in the file
     crosses a chunk boundary, the results are undefined.
 
     .. deprecated:: 0.4.0
@@ -124,7 +124,7 @@ def read_terminated(
     :param fp: a binary or text file-like object
     :param sep: a string or compiled regex that indicates the end of a segment
         wherever it occurs
-    :param bool retain: whether to include the delimiters at the end of each
+    :param bool retain: whether to include the separators at the end of each
         segment
     :param int chunk_size: how many bytes or characters to read from ``fp`` at
         a time
@@ -157,7 +157,7 @@ def split_preceded(
     :param s: a binary or text string
     :param sep: a string or compiled regex that indicates the start of a new
         segment wherever it occurs
-    :param bool retain: whether to include the delimiters at the beginning of
+    :param bool retain: whether to include the separators at the beginning of
         each segment
     :return: a list of the segments in ``s``
     :rtype: list of binary or text strings
@@ -214,7 +214,7 @@ def split_terminated(
     :param s: a binary or text string
     :param sep: a string or compiled regex that indicates the end of a segment
         wherever it occurs
-    :param bool retain: whether to include the delimiters at the end of each
+    :param bool retain: whether to include the separators at the end of each
         segment
     :return: a list of the segments in ``s``
     :rtype: list of binary or text strings
@@ -341,8 +341,8 @@ def ascii_splitlines(s: str, keepends: bool = False) -> list[str]:
     """
     .. versionadded:: 0.3.0
 
-    Like `str.splitlines()`, except it only treats LF, CR LF, and CR as line
-    endings
+    Like `str.splitlines()`, except it only treats ``"\\n"``, ``"\\r\\n"``, and
+    ``"\\r"`` as line endings
     """
     lines = []
     lastend = 0
@@ -366,7 +366,7 @@ def read_paragraphs(fp: Iterable[str]) -> Iterator[str]:
     one or more blank lines (i.e., lines containining only a line ending).
     Trailing and embedded line endings in each paragraph are retained.
 
-    Only LF, CR LF, and CR are recognized as line endings.
+    Only ``"\\n"``, ``"\\r\\n"``, and ``"\\r"`` are recognized as line endings.
     """
     para: list[str] = []
     for line in fp:
@@ -395,6 +395,6 @@ def split_paragraphs(s: str) -> list[str]:
     lines (i.e., lines containining only a line ending).  Trailing and embedded
     line endings in each paragraph are retained.
 
-    Only LF, CR LF, and CR are recognized as line endings.
+    Only ``"\\n"``, ``"\\r\\n"``, and ``"\\r"`` are recognized as line endings.
     """
     return split_terminated(s, _EOPARA_RGX, retain=True)

@@ -5,7 +5,8 @@ Handling lines with arbitrary separators
 text with custom separators that can occur either before, between, or after
 the segments they separate.
 
-Visit <https://github.com/jwodder/linesep> for more information.
+Visit <https://github.com/jwodder/linesep> or <https://linesep.rtfd.io> for
+more information.
 """
 
 __version__ = "0.4.0.dev1"

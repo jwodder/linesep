@@ -1,12 +1,16 @@
+.. currentmodule:: linesep
+
+Changelog
+=========
+
 v0.4.0 (in development)
 -----------------------
-- Passing a regular expression separator to a `read_*()` function is now
+- Passing a regular expression separator to a ``read_*()`` function is now
   deprecated, and support will be removed in version 1.0.
 - Added `TerminatedSplitter`, `PrecededSplitter`, `SeparatedSplitter`, &
   `UniversalNewlineSplitter` classes and `get_newline_splitter()` function for
   incremental splitting of strings in chunks
 - Drop support for Python 3.6
-- Moved documentation from README file to a Read the Docs site
 
 v0.3.1 (2022-05-31)
 -------------------
@@ -22,7 +26,8 @@ v0.2.0 (2020-11-28)
 -------------------
 - Now support only Python 3.6 and up (tested through 3.9) and PyPy3
 - Add type annotations
-- Renamed the "`size`" parameter of the `read_*` functions to `chunk_size`
+- Renamed the "``size``" parameter of the ``read_*`` functions to
+  ``chunk_size``
 - Add API documentation to README
 
 v0.1.1 (2017-05-29)
