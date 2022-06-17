@@ -1,9 +1,9 @@
 """
 Handling lines with arbitrary separators
 
-``linesep`` provides basic functions for reading, writing, splitting, & joining
-text with custom separators that can occur either before, between, or after
-the segments they separate.
+``linesep`` provides basic functions & classes for reading, writing, splitting,
+& joining text with custom separators that can occur either before, between, or
+after the segments they separate.
 
 Visit <https://github.com/jwodder/linesep> or <https://linesep.rtfd.io> for
 more information.

@@ -14,6 +14,10 @@ class Splitter(ABC, Generic[AnyStr]):
     Abstract base class for all splitters.  The abstract methods are an
     implementation detail; this class is exported only for `isinstance()` and
     typing purposes and should not be subclassed by users.
+
+    `Splitter` and its subclasses are generic in `AnyStr`; i.e., they should be
+    written in type annotations as ``SplitterClass[AnyStr]``,
+    ``SplitterClass[str]``, or ``SplitterClass[bytes]``, as appropriate.
     """
 
     def __init__(self) -> None:
@@ -256,7 +260,11 @@ class TerminatedSplitter(ConstantSplitter[AnyStr]):
     """
     .. versionadded:: 0.4.0
 
-    A splitter that splits segments terminated by a given string
+    A splitter that splits segments terminated by a given string.
+
+    A separator at the beginning of the input creates an empty leading segment,
+    and a separator at the end of the input simply terminates the last segment.
+    Two adjacent separators always create an empty segment between them.
     """
 
     def _handle_segment(
@@ -282,6 +290,10 @@ class SeparatedSplitter(ConstantSplitter[AnyStr]):
 
     A splitter that splits segments separated by a given string.
 
+    A separator at the beginning of the input creates an empty leading segment,
+    and a separator at the end of the input creates an empty trailing segment.
+    Two adjacent separators always create an empty segment between them.
+
     Note that, when ``retain`` is true, separators are returned as separate
     items, alternating with segments (unlike `TerminatedSplitter` and
     `PrecededSplitter`, where separators are appended/prepended to the
@@ -305,7 +317,11 @@ class PrecededSplitter(ConstantSplitter[AnyStr]):
     """
     .. versionadded:: 0.4.0
 
-    A splitter that splits segments preceded by a given string
+    A splitter that splits segments preceded by a given string.
+
+    A separator at the beginning of the input simply starts the first segment,
+    and a separator at the end of the input creates an empty trailing segment.
+    Two adjacent separators always create an empty segment between them.
     """
 
     def _handle_segment(
@@ -331,8 +347,8 @@ class UniversalNewlineSplitter(Splitter[AnyStr]):
     """
     .. versionadded:: 0.4.0
 
-    A splitter that splits on the ASCII newline sequences ``"\\n"``,
-    ``"\\r\\n"``, and ``"\\r"``.
+    A splitter that splits segments terminated by the ASCII newline sequences
+    ``"\\n"``, ``"\\r\\n"``, and ``"\\r"``.
     """
 
     def __init__(self, retain: bool = False, translate: bool = True) -> None:

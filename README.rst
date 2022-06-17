@@ -23,9 +23,9 @@
 | `Issues <https://github.com/jwodder/linesep/issues>`_
 | `Changelog <https://github.com/jwodder/linesep/blob/master/CHANGELOG.md>`_
 
-``linesep`` provides basic functions for reading, writing, splitting, & joining
-text with custom separators that can occur either before, between, or after the
-segments they separate.
+``linesep`` provides basic functions & classes for reading, writing, splitting,
+& joining text with custom separators that can occur either before, between, or
+after the segments they separate.
 
 Installation
 ============
@@ -68,3 +68,20 @@ A poor man's `JSON Text Sequence <https://tools.ietf.org/html/rfc7464>`_ parser:
             pass
         else:
             yield obj
+
+Read from a text file one paragraph at a time:
+
+.. code:: python
+
+    with open("my-novel.txt") as fp:
+        for paragraph in linesep.read_paragraphs(fp):
+            ...
+
+Split input from an ``anyio.TextReceiveStream`` on newlines:
+
+.. code:: python
+
+    async with anyio.TextReceiveStream( ... ) as stream:
+        splitter = linesep.UnicodeNewlineSplitter()
+        async for line in splitter.aitersplit(stream):
+            print(line)
