@@ -4,62 +4,10 @@ from collections import deque
 from collections.abc import AsyncIterable, AsyncIterator, Iterable, Iterator
 from dataclasses import dataclass
 import re
-import sys
 from typing import AnyStr, Generic, Optional
 
-if sys.version_info[:2] >= (3, 8):
-    from typing import Protocol
-else:
-    from typing_extensions import Protocol
 
-
-class Splitter(Protocol[AnyStr]):
-    def feed(self, data: AnyStr) -> None:
-        ...
-
-    def close(self) -> None:
-        ...
-
-    def get(self) -> AnyStr:
-        ...
-
-    def getall(self) -> list[AnyStr]:
-        ...
-
-    def split(self, data: AnyStr, final: bool = False) -> list[AnyStr]:
-        ...
-
-    @property
-    def nonempty(self) -> bool:
-        ...
-
-    @property
-    def closed(self) -> bool:
-        ...
-
-    def reset(self) -> None:
-        ...
-
-    def getstate(self) -> SplitterState[AnyStr]:
-        ...
-
-    def setstate(self, state: SplitterState[AnyStr]) -> None:
-        ...
-
-    def itersplit(self, iterable: Iterable[AnyStr]) -> Iterator[AnyStr]:
-        ...
-
-    async def aitersplit(
-        self, aiterable: AsyncIterable[AnyStr]
-    ) -> AsyncIterator[AnyStr]:  # pragma: no cover
-        # Due to <https://github.com/python/mypy/issues/5070>, we need a
-        # "yield" in here.
-        raise NotImplementedError
-        async for s in aiterable:
-            yield s
-
-
-class AbstractSplitter(ABC, Generic[AnyStr]):
+class Splitter(ABC, Generic[AnyStr]):
     def __init__(self) -> None:
         self._items: deque[AnyStr] = deque()
         self._buff: Optional[AnyStr] = None
@@ -188,7 +136,7 @@ class AbstractSplitter(ABC, Generic[AnyStr]):
             self.setstate(st)
 
 
-class ConstantSplitter(AbstractSplitter[AnyStr]):
+class ConstantSplitter(Splitter[AnyStr]):
     def __init__(self, separator: AnyStr, retain: bool = False) -> None:
         if not separator:
             raise ValueError("Separator cannot be empty")
@@ -254,7 +202,7 @@ class PrecededSplitter(ConstantSplitter[AnyStr]):
             self._hold = item
 
 
-class UniversalNewlineSplitter(AbstractSplitter[AnyStr]):
+class UniversalNewlineSplitter(Splitter[AnyStr]):
     def __init__(self, retain: bool = False, translate: bool = True) -> None:
         super().__init__()
         self._retain = retain
