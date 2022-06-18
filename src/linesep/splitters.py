@@ -408,8 +408,9 @@ class UnicodeNewlineSplitter(Splitter[str]):
     .. versionadded:: 0.5.0
 
     A splitter that splits segments terminated by the same set of line endings
-    as recognized by the `str.splitlines()` method.  Note that this class is
-    only usable on `str` values, not on `bytes`.
+    as recognized by the `str.splitlines()` method.  Note that, unlike other
+    splitters, this class is not generic and is only usable on `str` values,
+    not `bytes`.
     """
 
     SEP_RGX = re.compile(r"\r\n?|[\n\v\f\x1C-\x1E\x85\u2028\u2029]")
