@@ -5,6 +5,7 @@ from typing import Optional, TypeVar
 import pytest
 from pytest_subtests import SubTests
 from linesep import (
+    ParagraphSplitter,
     PrecededSplitter,
     SeparatedSplitter,
     SplitterClosedError,
@@ -657,3 +658,172 @@ def test_unicode_newline_splitter(
         assert splitter.split(x) == y
     splitter.close()
     assert splitter.getall() == endput
+
+
+@pytest.mark.parametrize(
+    "retain,translate,inputs,outputs,endput",
+    [
+        (False, False, [], [[]], []),
+        (True, False, [], [[]], []),
+        (False, False, [""], [[]], []),
+        (True, False, [""], [[]], []),
+        (False, False, ["foo\n"], [[]], ["foo"]),
+        (False, False, ["foo\nbar"], [[]], ["foo\nbar"]),
+        (False, False, ["foo\r\nbar"], [[]], ["foo\r\nbar"]),
+        (False, False, ["foo\rbar"], [[]], ["foo\rbar"]),
+        (False, False, ["foo\v"], [[]], ["foo\v"]),
+        (False, False, ["foo\f"], [[]], ["foo\f"]),
+        (False, False, ["foo\x1C"], [[]], ["foo\x1C"]),
+        (False, False, ["foo\x1D"], [[]], ["foo\x1D"]),
+        (False, False, ["foo\x1E"], [[]], ["foo\x1E"]),
+        (False, False, ["foo\x85"], [[]], ["foo\x85"]),
+        (False, False, ["foo\u2028"], [[]], ["foo\u2028"]),
+        (False, False, ["foo\u2029"], [[]], ["foo\u2029"]),
+        (False, False, ["foo\n\n"], [["foo"]], []),
+        (False, False, ["foo\n\nbar"], [["foo"]], ["bar"]),
+        (False, False, ["foo\r\n\r\nbar"], [["foo"]], ["bar"]),
+        (False, False, ["foo\r\rbar"], [["foo"]], ["bar"]),
+        (False, False, ["\nfoo"], [[""]], ["foo"]),
+        (False, False, ["\r\nfoo"], [[""]], ["foo"]),
+        (False, False, ["\rfoo"], [[""]], ["foo"]),
+        (
+            False,
+            False,
+            ["foo\nbar\n", "\nbaz\n\n\nquux"],
+            [[], ["foo\nbar", "baz"]],
+            ["quux"],
+        ),
+        (
+            False,
+            False,
+            ["foo\nbar\n\n", "\nbaz\n\n\nquux"],
+            [["foo\nbar"], ["baz"]],
+            ["quux"],
+        ),
+        (
+            False,
+            False,
+            ["foo\nbar\n \n", "\nbaz\n\n\nquux"],
+            [[], ["foo\nbar\n ", "baz"]],
+            ["quux"],
+        ),
+        (
+            False,
+            False,
+            ["foo\n", "bar\n", "baz\n", "\n", "\n", "\n", "quux\n", "\n"],
+            [[], [], [], ["foo\nbar\nbaz"], [], [], [], ["quux"]],
+            [],
+        ),
+        (False, False, ["foo\r\vbar"], [[]], ["foo\r\vbar"]),
+        (False, False, ["foo\v\fbar"], [[]], ["foo\v\fbar"]),
+        (False, False, ["foo\f\x1Cbar"], [[]], ["foo\f\x1Cbar"]),
+        (False, False, ["foo\x1C\x1Dbar"], [[]], ["foo\x1C\x1Dbar"]),
+        (False, False, ["foo\x1D\x1Ebar"], [[]], ["foo\x1D\x1Ebar"]),
+        (False, False, ["foo\x1E\x85bar"], [[]], ["foo\x1E\x85bar"]),
+        (False, False, ["foo\x85\u2028bar"], [[]], ["foo\x85\u2028bar"]),
+        (False, False, ["foo\u2028\u2029bar"], [[]], ["foo\u2028\u2029bar"]),
+        (False, False, ["foo\u2029\nbar"], [[]], ["foo\u2029\nbar"]),
+        (True, False, ["foo\n"], [[]], ["foo\n"]),
+        (True, False, ["foo\nbar"], [[]], ["foo\nbar"]),
+        (True, False, ["foo\r\nbar"], [[]], ["foo\r\nbar"]),
+        (True, False, ["foo\rbar"], [[]], ["foo\rbar"]),
+        (True, False, ["foo\n\n"], [[]], ["foo\n\n"]),
+        (True, False, ["foo\n\nbar"], [["foo\n\n"]], ["bar"]),
+        (True, False, ["foo\r\n\r\nbar"], [["foo\r\n\r\n"]], ["bar"]),
+        (True, False, ["foo\r\rbar"], [["foo\r\r"]], ["bar"]),
+        (True, False, ["\nfoo"], [["\n"]], ["foo"]),
+        (True, False, ["\r\nfoo"], [["\r\n"]], ["foo"]),
+        (True, False, ["\rfoo"], [["\r"]], ["foo"]),
+        (
+            True,
+            False,
+            ["foo\nbar\n", "\nbaz\n\n\nquux"],
+            [[], ["foo\nbar\n\n", "baz\n\n\n"]],
+            ["quux"],
+        ),
+        (
+            True,
+            False,
+            ["foo\nbar\n\n", "\nbaz\n\n\nquux"],
+            [[], ["foo\nbar\n\n\n", "baz\n\n\n"]],
+            ["quux"],
+        ),
+        (
+            True,
+            False,
+            ["foo\nbar\n \n", "\nbaz\n\n\nquux"],
+            [[], ["foo\nbar\n \n\n", "baz\n\n\n"]],
+            ["quux"],
+        ),
+        (
+            True,
+            False,
+            ["foo\n", "bar\n", "baz\n", "\n", "\n", "\n", "quux\n", "\n"],
+            [[], [], [], [], [], [], ["foo\nbar\nbaz\n\n\n\n"], []],
+            ["quux\n\n"],
+        ),
+        (True, True, ["foo\n"], [[]], ["foo\n"]),
+        (True, True, ["foo\nbar"], [[]], ["foo\nbar"]),
+        (True, True, ["foo\r\nbar"], [[]], ["foo\nbar"]),
+        (True, True, ["foo\rbar"], [[]], ["foo\nbar"]),
+        (True, True, ["foo\n\n"], [[]], ["foo\n\n"]),
+        (True, True, ["foo\n\nbar"], [["foo\n\n"]], ["bar"]),
+        (True, True, ["foo\r\n\r\nbar"], [["foo\n\n"]], ["bar"]),
+        (True, True, ["foo\r\rbar"], [["foo\n\n"]], ["bar"]),
+        (True, True, ["\nfoo"], [["\n"]], ["foo"]),
+        (True, True, ["\r\nfoo"], [["\n"]], ["foo"]),
+        (True, True, ["\rfoo"], [["\n"]], ["foo"]),
+        (
+            True,
+            True,
+            ["foo\nbar\n", "\nbaz\n\n\nquux"],
+            [[], ["foo\nbar\n\n", "baz\n\n\n"]],
+            ["quux"],
+        ),
+        (
+            True,
+            True,
+            ["foo\nbar\n\n", "\nbaz\n\n\nquux"],
+            [[], ["foo\nbar\n\n\n", "baz\n\n\n"]],
+            ["quux"],
+        ),
+        (
+            True,
+            True,
+            ["foo\nbar\n \n", "\nbaz\n\n\nquux"],
+            [[], ["foo\nbar\n \n\n", "baz\n\n\n"]],
+            ["quux"],
+        ),
+        (
+            True,
+            True,
+            ["foo\n", "bar\n", "baz\n", "\n", "\n", "\n", "quux\n", "\n"],
+            [[], [], [], [], [], [], ["foo\nbar\nbaz\n\n\n\n"], []],
+            ["quux\n\n"],
+        ),
+    ],
+)
+def test_paragraph_splitter(
+    subtests: SubTests,
+    retain: bool,
+    translate: bool,
+    inputs: list[str],
+    outputs: list[list[str]],
+    endput: list[str],
+) -> None:
+    with subtests.test("str"):
+        splitter: ParagraphSplitter[str] = ParagraphSplitter(
+            retain=retain, translate=translate
+        )
+        for x, y in zip(inputs, outputs):
+            assert splitter.split(x) == y
+        splitter.close()
+        assert splitter.getall() == endput
+    with subtests.test("bytes"):
+        bsplitter: ParagraphSplitter[bytes] = ParagraphSplitter(
+            retain=retain, translate=translate
+        )
+        for x, y in zip(inputs, outputs):
+            assert bsplitter.split(x.encode("utf-8")) == encode_list(y)
+        bsplitter.close()
+        assert bsplitter.getall() == encode_list(endput)
