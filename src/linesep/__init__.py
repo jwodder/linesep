@@ -9,7 +9,7 @@ Visit <https://github.com/jwodder/linesep> or <https://linesep.rtfd.io> for
 more information.
 """
 
-__version__ = "0.4.0"
+__version__ = "0.5.0.dev1"
 __author__ = "John Thorvald Wodder II"
 __author_email__ = "linesep@varonathe.org"
 __license__ = "MIT"
@@ -40,6 +40,7 @@ from .splitters import (
     SplitterEmptyError,
     SplitterState,
     TerminatedSplitter,
+    UnicodeNewlineSplitter,
     UniversalNewlineSplitter,
     get_newline_splitter,
 )
@@ -52,6 +53,7 @@ __all__ = [
     "SplitterEmptyError",
     "SplitterState",
     "TerminatedSplitter",
+    "UnicodeNewlineSplitter",
     "UniversalNewlineSplitter",
     "ascii_splitlines",
     "get_newline_splitter",

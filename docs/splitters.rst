@@ -92,6 +92,9 @@ Splitters
 .. autoclass:: TerminatedSplitter
     :no-members:
 
+.. autoclass:: UnicodeNewlineSplitter
+    :no-members:
+
 .. autoclass:: UniversalNewlineSplitter
     :no-members:
 

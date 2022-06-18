@@ -403,6 +403,56 @@ class UniversalNewlineSplitter(Splitter[AnyStr]):
             self._hold = None
 
 
+class UnicodeNewlineSplitter(Splitter[str]):
+    """
+    .. versionadded:: 0.5.0
+
+    A splitter that splits segments terminated by the same set of line endings
+    as recognized by the `str.splitlines()` method.  Note that this class is
+    only usable on `str` values, not on `bytes`.
+    """
+
+    SEP_RGX = re.compile(r"\r\n?|[\n\v\f\x1C-\x1E\x85\u2028\u2029]")
+
+    def __init__(self, retain: bool = False, translate: bool = True) -> None:
+        """
+        :param bool retain:
+            Whether to include the newlines in split items (`True`) or discard
+            them (`False`, default)
+        :param bool translate:
+            Whether to convert all retained newlines to ``"\\n"`` (`True`,
+            default) or leave them as-is (`False`)
+        """
+        super().__init__()
+        self._retain = retain
+        self._translate = translate
+
+    def _find_separator(self, data: str) -> Optional[tuple[int, int]]:
+        m = self.SEP_RGX.search(data)
+        if m and not (m.group() == "\r" and m.end() == len(data) and not self.closed):
+            return m.span()
+        else:
+            return None
+
+    def _handle_segment(
+        self, item: str, first: bool = False, last: bool = False  # noqa: U100
+    ) -> None:
+        if not last or item:
+            if self._retain and not last:
+                assert self._hold is None
+                self._hold = item
+            else:
+                self._output(item)
+
+    def _handle_separator(self, item: str) -> None:
+        if self._retain:
+            if self._translate:
+                item = "\n"
+            assert self._hold is not None
+            self._output(self._hold + item)
+            self._hold = None
+
+
 def get_newline_splitter(
     newline: Optional[str] = None, retain: bool = False
 ) -> Splitter[str]:

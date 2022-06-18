@@ -3,6 +3,11 @@
 Changelog
 =========
 
+v0.5.0 (in development)
+-----------------------
+- Added `UnicodeNewlineSplitter` for incremental splitting on Unicode line
+  ending sequences
+
 v0.4.0 (2022-06-17)
 -------------------
 - Passing a regular expression separator to a ``read_*()`` function is now
