@@ -7,6 +7,7 @@ v0.5.0 (in development)
 -----------------------
 - Added `UnicodeNewlineSplitter` for incremental splitting on Unicode line
   ending sequences
+- Added `ParagraphSplitter` for incremental splitting on blank lines
 
 v0.4.0 (2022-06-17)
 -------------------

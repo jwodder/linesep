@@ -367,21 +367,8 @@ class UniversalNewlineSplitter(Splitter[AnyStr]):
 
     def _find_separator(self, data: AnyStr) -> Optional[tuple[int, int]]:
         if self._strs is None:
-            if isinstance(data, str):
-                self._strs = NewlineStrs(
-                    regex=re.compile(r"\r\n?|\n"), CR="\r", LF="\n"
-                )
-            else:
-                self._strs = NewlineStrs(
-                    regex=re.compile(rb"\r\n?|\n"), CR=b"\r", LF=b"\n"
-                )
-        m = self._strs.regex.search(data)
-        if m and not (
-            m.group() == self._strs.CR and m.end() == len(data) and not self.closed
-        ):
-            return m.span()
-        else:
-            return None
+            self._strs = NewlineStrs.for_type(data)
+        return self._strs.search(data, self.closed)
 
     def _handle_segment(
         self, item: AnyStr, first: bool = False, last: bool = False  # noqa: U100
@@ -454,6 +441,98 @@ class UnicodeNewlineSplitter(Splitter[str]):
             self._hold = None
 
 
+class ParagraphSplitter(Splitter[AnyStr]):
+    """
+    .. versionadded:: 0.5.0
+
+    A splitter that splits segments terminated by one or more blank lines
+    (i.e., lines containing only a line ending), where lines are terminated by
+    the ASCII newline sequences ``"\\n"``, ``"\\r\\n"``, and ``"\\r"``.
+    """
+
+    def __init__(self, retain: bool = False, translate: bool = True) -> None:
+        """
+        :param bool retain:
+            Whether to include the trailing newlines in split items (`True`) or
+            discard them (`False`, default)
+        :param bool translate:
+            Whether to convert all newlines (both trailing and internal) to
+            ``"\\n"`` (`True`, default) or leave them as-is (`False`)
+        """
+        super().__init__()
+        self._retain = retain
+        self._translate = translate
+        self._strs: Optional[NewlineStrs[AnyStr]] = None
+
+    def _split(self) -> None:
+        if self._strs is None and self._buff is not None:
+            self._strs = NewlineStrs.for_type(self._buff)
+        pos = 0
+        while self._buff:
+            assert self._strs is not None
+            if self._hold is None:
+                span = self._strs.search(self._buff, self.closed, pos=pos)
+                if span is None:
+                    break
+                start, end = span
+                if (self._first and start == 0) or self._strs.match(
+                    self._buff, pos=end, closed=self.closed
+                ) is not None:
+                    if self._retain:
+                        self._hold = self._buff[:start]
+                    else:
+                        self._output(self._buff[:start])
+                        self._hold = self._buff[0:0]
+                    self._handle_separator(self._buff[start:end])
+                    self._first = False
+                    self._buff = self._buff[end:]
+                else:
+                    if self._translate and self._buff[start:end] != self._strs.LF:
+                        self._buff = (
+                            self._buff[:start] + self._strs.LF + self._buff[end:]
+                        )
+                        end = start + 1
+                    pos = end
+            else:
+                end2 = self._strs.match(self._buff, self.closed)
+                if end2 is None:
+                    if self._retain:
+                        self._output(self._hold)
+                    self._hold = None
+                elif end2 == -1:
+                    break
+                else:
+                    self._handle_separator(self._buff[:end2])
+                    self._buff = self._buff[end2:]
+                    pos = 0
+        if self._closed and self._buff is not None:
+            assert self._strs is not None
+            if self._buff:
+                if not self._retain:
+                    length = self._strs.endmatch(self._buff)
+                    if length is not None:
+                        self._buff = self._buff[:-length]
+                self._output(self._buff)
+            elif self._retain and self._hold is not None:
+                self._output(self._hold)
+            self._buff = None
+
+    def _find_separator(self, data: AnyStr) -> Optional[tuple[int, int]]:
+        raise NotImplementedError("Not used by this subclass")  # pragma: no cover
+
+    def _handle_segment(
+        self, item: AnyStr, first: bool = False, last: bool = False
+    ) -> None:
+        raise NotImplementedError("Not used by this subclass")  # pragma: no cover
+
+    def _handle_separator(self, item: AnyStr) -> None:
+        if self._translate:
+            assert self._strs is not None
+            item = self._strs.LF
+        assert self._hold is not None
+        self._hold += item
+
+
 def get_newline_splitter(
     newline: Optional[str] = None, retain: bool = False
 ) -> Splitter[str]:
@@ -517,6 +596,45 @@ class NewlineStrs(Generic[AnyStr]):
     regex: re.Pattern[AnyStr]
     CR: AnyStr
     LF: AnyStr
+
+    @property
+    def CRLF(self) -> AnyStr:
+        return self.CR + self.LF
+
+    @classmethod
+    def for_type(cls, data: AnyStr) -> NewlineStrs[AnyStr]:
+        if isinstance(data, str):
+            return cls(regex=re.compile(r"\r\n?|\n"), CR="\r", LF="\n")
+        else:
+            return cls(regex=re.compile(rb"\r\n?|\n"), CR=b"\r", LF=b"\n")
+
+    def search(
+        self, data: AnyStr, closed: bool, pos: int = 0
+    ) -> Optional[tuple[int, int]]:
+        m = self.regex.search(data, pos=pos)
+        if m and not (m.group() == self.CR and m.end() == len(data) and not closed):
+            return m.span()
+        else:
+            return None
+
+    def match(self, data: AnyStr, closed: bool, pos: int = 0) -> Optional[int]:
+        # A return value of -1 means that that ``data[pos:] == CR`` and
+        # `closed` is False
+        m = self.regex.match(data, pos=pos)
+        if not m:
+            return None
+        elif m.group() == self.CR and m.end() == len(data) and not closed:
+            return -1
+        else:
+            return len(m.group())
+
+    def endmatch(self, data: AnyStr) -> Optional[int]:
+        if data.endswith(self.CRLF):
+            return 2
+        elif data.endswith((self.CR, self.LF)):
+            return 1
+        else:
+            return None
 
 
 @dataclass(repr=False)

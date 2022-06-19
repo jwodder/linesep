@@ -33,6 +33,7 @@ from .funcs import (
     write_terminated,
 )
 from .splitters import (
+    ParagraphSplitter,
     PrecededSplitter,
     SeparatedSplitter,
     Splitter,
@@ -46,6 +47,7 @@ from .splitters import (
 )
 
 __all__ = [
+    "ParagraphSplitter",
     "PrecededSplitter",
     "SeparatedSplitter",
     "Splitter",

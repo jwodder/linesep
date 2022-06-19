@@ -83,6 +83,9 @@ Splitters
 .. autoclass:: Splitter
     :member-order: bysource
 
+.. autoclass:: ParagraphSplitter
+    :no-members:
+
 .. autoclass:: PrecededSplitter
     :no-members:
 

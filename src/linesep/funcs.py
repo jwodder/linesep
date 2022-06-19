@@ -363,7 +363,7 @@ def read_paragraphs(fp: Iterable[str]) -> Iterator[str]:
 
     Read a text filehandle or other iterable of lines (with trailing line
     endings retained) paragraph by paragraph.  Each paragraph is terminated by
-    one or more blank lines (i.e., lines containining only a line ending).
+    one or more blank lines (i.e., lines containing only a line ending).
     Trailing and embedded line endings in each paragraph are retained.
 
     Only ``"\\n"``, ``"\\r\\n"``, and ``"\\r"`` are recognized as line endings.
@@ -392,7 +392,7 @@ def split_paragraphs(s: str) -> list[str]:
     .. versionadded:: 0.3.0
 
     Split a string into paragraphs, each one terminated by one or more blank
-    lines (i.e., lines containining only a line ending).  Trailing and embedded
+    lines (i.e., lines containing only a line ending).  Trailing and embedded
     line endings in each paragraph are retained.
 
     Only ``"\\n"``, ``"\\r\\n"``, and ``"\\r"`` are recognized as line endings.
