@@ -15,8 +15,8 @@ class Splitter(ABC, Generic[AnyStr]):
     implementation detail; this class is exported only for `isinstance()` and
     typing purposes and should not be subclassed by users.
 
-    `Splitter` and its subclasses are generic in `AnyStr`; i.e., they should be
-    written in type annotations as ``SplitterClass[AnyStr]``,
+    `Splitter` and its subclasses are generic in `typing.AnyStr`; i.e., they
+    should be written in type annotations as ``SplitterClass[AnyStr]``,
     ``SplitterClass[str]``, or ``SplitterClass[bytes]``, as appropriate.
     """
 
