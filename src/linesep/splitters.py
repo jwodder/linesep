@@ -176,8 +176,8 @@ class Splitter(ABC, Generic[AnyStr]):
 
     def setstate(self, state: SplitterState[AnyStr]) -> None:
         """
-        Restore the state of the splitter to the what it was when the
-        corresponding `getstate()` call was made
+        Restore the state of the splitter to what it was when the corresponding
+        `getstate()` call was made
         """
         self._items.clear()
         self._items.extend(state.items)
