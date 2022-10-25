@@ -3,6 +3,10 @@
 Changelog
 =========
 
+v0.6.0 (in development)
+-----------------------
+- Support Python 3.11
+
 v0.5.0 (2022-06-22)
 -------------------
 - Added `UnicodeNewlineSplitter` for incremental splitting on Unicode line

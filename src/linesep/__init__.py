@@ -9,7 +9,7 @@ Visit <https://github.com/jwodder/linesep> or <https://linesep.rtfd.io> for
 more information.
 """
 
-__version__ = "0.5.0"
+__version__ = "0.6.0.dev1"
 __author__ = "John Thorvald Wodder II"
 __author_email__ = "linesep@varonathe.org"
 __license__ = "MIT"
