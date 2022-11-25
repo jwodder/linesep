@@ -20,7 +20,7 @@ from linesep.splitters import ConstantSplitter
 if sys.version_info[:2] < (3, 10):
     T = TypeVar("T")
 
-    async def anext(obj: AsyncIterator[T]) -> T:
+    async def anext(obj: AsyncIterator[T]) -> T:  # noqa: A001
         return await obj.__anext__()
 
 
