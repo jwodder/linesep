@@ -2,7 +2,7 @@ from linesep import __version__
 
 project = "linesep"
 author = "John Thorvald Wodder II"
-copyright = "2016-2022 John Thorvald Wodder II"
+copyright = "2016-2022 John Thorvald Wodder II"  # noqa: A001
 
 extensions = [
     "sphinx.ext.autodoc",
