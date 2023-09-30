@@ -88,7 +88,7 @@ def test_join(
         assert joiner(bentries, sep.encode("utf-8")) == joined.encode("utf-8")
     with subtests.test("write-str"):
         p = tmp_path / "text"
-        with p.open("w", newline="") as fp:
+        with p.open("w", encoding="utf-8", newline="") as fp:
             writer(fp, entries, sep)
         with p.open(encoding="utf-8", newline="") as fp:
             assert fp.read() == joined
