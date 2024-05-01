@@ -27,8 +27,7 @@ if TYPE_CHECKING:
             s: AnyStr,
             sep: AnyStr | re.Pattern[AnyStr],
             retain: bool = False,
-        ) -> list[AnyStr]:
-            ...
+        ) -> list[AnyStr]: ...
 
     class Reader(Protocol):
         def __call__(
@@ -37,8 +36,7 @@ if TYPE_CHECKING:
             sep: AnyStr | re.Pattern[AnyStr],
             retain: bool = False,
             chunk_size: int = 512,
-        ) -> Iterator[AnyStr]:
-            ...
+        ) -> Iterator[AnyStr]: ...
 
 
 SCENARIOS = {
