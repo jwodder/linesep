@@ -20,10 +20,10 @@ from linesep import ascii_splitlines, read_paragraphs, split_paragraphs
         ("foo\n\nbar", ["foo", "", "bar"]),
         ("foo\n\nbar\n", ["foo", "", "bar"]),
         (
-            "Why\vare\fthere\x1Cso\x1Ddang\x1Emany\x85line\u2028separator\u2029"
+            "Why\vare\fthere\x1cso\x1ddang\x1emany\x85line\u2028separator\u2029"
             "characters?",
             [
-                "Why\vare\fthere\x1Cso\x1Ddang\x1Emany\x85line\u2028separator\u2029"
+                "Why\vare\fthere\x1cso\x1ddang\x1emany\x85line\u2028separator\u2029"
                 "characters?"
             ],
         ),
@@ -49,10 +49,10 @@ def test_ascii_splitlines(s: str, lines: list[str]) -> None:
         ("foo\n\nbar", ["foo\n", "\n", "bar"]),
         ("foo\n\nbar\n", ["foo\n", "\n", "bar\n"]),
         (
-            "Why\vare\fthere\x1Cso\x1Ddang\x1Emany\x85line\u2028separator\u2029"
+            "Why\vare\fthere\x1cso\x1ddang\x1emany\x85line\u2028separator\u2029"
             "characters?",
             [
-                "Why\vare\fthere\x1Cso\x1Ddang\x1Emany\x85line\u2028separator\u2029"
+                "Why\vare\fthere\x1cso\x1ddang\x1emany\x85line\u2028separator\u2029"
                 "characters?"
             ],
         ),
