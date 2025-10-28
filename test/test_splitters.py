@@ -1,7 +1,6 @@
 from __future__ import annotations
 from collections.abc import AsyncIterator
-import sys
-from typing import Optional, TypeVar
+from typing import Optional
 import pytest
 from pytest_subtests import SubTests
 from linesep import (
@@ -16,12 +15,6 @@ from linesep import (
     get_newline_splitter,
 )
 from linesep.splitters import ConstantSplitter
-
-if sys.version_info[:2] < (3, 10):
-    T = TypeVar("T")
-
-    async def anext(obj: AsyncIterator[T]) -> T:  # noqa: A001
-        return await obj.__anext__()
 
 
 def encode_list(txt: list[str]) -> list[bytes]:
