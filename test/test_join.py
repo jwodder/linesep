@@ -1,6 +1,7 @@
 from __future__ import annotations
+from collections.abc import Callable, Iterable
 from pathlib import Path
-from typing import AnyStr, Callable, IO, Iterable
+from typing import AnyStr, IO, TypeAlias
 import pytest
 from pytest_subtests import SubTests
 from linesep import (
@@ -55,9 +56,8 @@ SCENARIOS = [
     ),
 ]
 
-# Callable and Iterable need to be from typing for pre-Python 3.9 compatibility
-Joiner = Callable[[Iterable[AnyStr], AnyStr], AnyStr]
-Writer = Callable[[IO[AnyStr], Iterable[AnyStr], AnyStr], None]
+Joiner: TypeAlias = Callable[[Iterable[AnyStr], AnyStr], AnyStr]
+Writer: TypeAlias = Callable[[IO[AnyStr], Iterable[AnyStr], AnyStr], None]
 
 
 @pytest.mark.parametrize(

@@ -2,7 +2,7 @@ from __future__ import annotations
 from collections.abc import Iterator
 from pathlib import Path
 import re
-from typing import AnyStr, IO, List, Protocol, cast
+from typing import AnyStr, IO, Protocol
 import pytest
 from pytest_subtests import SubTests
 from linesep import (
@@ -326,8 +326,8 @@ SCENARIOS = {
         "preceded_retained": [*"This is test text.", ""],
         "terminated_retained": ["", *"This is test text."],
         "separated_retained": [""]
-        # We need to use typing.List here for pre-Python 3.9 compatibility:
-        + sum([["", c] for c in "This is test text."], cast(List[str], [])) + ["", ""],
+        + sum([["", c] for c in "This is test text."], [])
+        + ["", ""],
     },
 }
 

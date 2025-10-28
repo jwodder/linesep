@@ -1,6 +1,5 @@
 from __future__ import annotations
 from collections.abc import AsyncIterator
-from typing import Optional
 import pytest
 from pytest_subtests import SubTests
 from linesep import (
@@ -443,7 +442,7 @@ def test_universal_newline_splitter(
     ],
 )
 def test_get_newline_splitter(
-    newline: Optional[str], retain: bool, outputs: list[str]
+    newline: str | None, retain: bool, outputs: list[str]
 ) -> None:
     splitter = get_newline_splitter(newline, retain=retain)
     assert splitter.split("fee\nfie\rfoe\r\nfoo\n", final=True) == outputs
