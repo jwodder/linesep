@@ -1,7 +1,5 @@
 from __future__ import annotations
 from collections.abc import AsyncIterator
-import sys
-from typing import Optional, TypeVar
 import pytest
 from pytest_subtests import SubTests
 from linesep import (
@@ -16,12 +14,6 @@ from linesep import (
     get_newline_splitter,
 )
 from linesep.splitters import ConstantSplitter
-
-if sys.version_info[:2] < (3, 10):
-    T = TypeVar("T")
-
-    async def anext(obj: AsyncIterator[T]) -> T:  # noqa: A001
-        return await obj.__anext__()
 
 
 def encode_list(txt: list[str]) -> list[bytes]:
@@ -450,7 +442,7 @@ def test_universal_newline_splitter(
     ],
 )
 def test_get_newline_splitter(
-    newline: Optional[str], retain: bool, outputs: list[str]
+    newline: str | None, retain: bool, outputs: list[str]
 ) -> None:
     splitter = get_newline_splitter(newline, retain=retain)
     assert splitter.split("fee\nfie\rfoe\r\nfoo\n", final=True) == outputs

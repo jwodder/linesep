@@ -4,7 +4,7 @@ from collections import deque
 from collections.abc import AsyncIterable, AsyncIterator, Iterable, Iterator
 from dataclasses import dataclass
 import re
-from typing import AnyStr, Generic, Optional
+from typing import AnyStr, Generic
 
 
 class Splitter(ABC, Generic[AnyStr]):
@@ -24,17 +24,17 @@ class Splitter(ABC, Generic[AnyStr]):
         #: The output queue
         self._items: deque[AnyStr] = deque()
         #: The buffer of unsplit input data
-        self._buff: Optional[AnyStr] = None
+        self._buff: AnyStr | None = None
         #: A "hold space" for holding intermediate states of compound output
         #: items
-        self._hold: Optional[AnyStr] = None
+        self._hold: AnyStr | None = None
         #: Whether `close()` has been called
         self._closed: bool = False
         #: Whether we've handled the first split segment yet
         self._first: bool = True
 
     @abstractmethod
-    def _find_separator(self, data: AnyStr) -> Optional[tuple[int, int]]:
+    def _find_separator(self, data: AnyStr) -> tuple[int, int] | None:
         """
         Find the first occurrence of a separator in ``data`` and return the
         separator's starting and ending indices; if no separator is found,
@@ -247,7 +247,7 @@ class ConstantSplitter(Splitter[AnyStr]):
         self._separator: AnyStr = separator
         self._retain: bool = retain
 
-    def _find_separator(self, data: AnyStr) -> Optional[tuple[int, int]]:
+    def _find_separator(self, data: AnyStr) -> tuple[int, int] | None:
         try:
             i = data.index(self._separator)
         except ValueError:
@@ -363,9 +363,9 @@ class UniversalNewlineSplitter(Splitter[AnyStr]):
         super().__init__()
         self._retain = retain
         self._translate = translate
-        self._strs: Optional[NewlineStrs[AnyStr]] = None
+        self._strs: NewlineStrs[AnyStr] | None = None
 
-    def _find_separator(self, data: AnyStr) -> Optional[tuple[int, int]]:
+    def _find_separator(self, data: AnyStr) -> tuple[int, int] | None:
         if self._strs is None:
             self._strs = NewlineStrs.for_type(data)
         return self._strs.search(data, self.closed)
@@ -415,7 +415,7 @@ class UnicodeNewlineSplitter(Splitter[str]):
         self._retain = retain
         self._translate = translate
 
-    def _find_separator(self, data: str) -> Optional[tuple[int, int]]:
+    def _find_separator(self, data: str) -> tuple[int, int] | None:
         m = self.SEP_RGX.search(data)
         if m and not (m.group() == "\r" and m.end() == len(data) and not self.closed):
             return m.span()
@@ -462,7 +462,7 @@ class ParagraphSplitter(Splitter[AnyStr]):
         super().__init__()
         self._retain = retain
         self._translate = translate
-        self._strs: Optional[NewlineStrs[AnyStr]] = None
+        self._strs: NewlineStrs[AnyStr] | None = None
 
     def _split(self) -> None:
         if self._strs is None and self._buff is not None:
@@ -517,7 +517,7 @@ class ParagraphSplitter(Splitter[AnyStr]):
                 self._output(self._hold)
             self._buff = None
 
-    def _find_separator(self, data: AnyStr) -> Optional[tuple[int, int]]:
+    def _find_separator(self, data: AnyStr) -> tuple[int, int] | None:
         raise NotImplementedError("Not used by this subclass")  # pragma: no cover
 
     def _handle_segment(
@@ -534,7 +534,7 @@ class ParagraphSplitter(Splitter[AnyStr]):
 
 
 def get_newline_splitter(
-    newline: Optional[str] = None, retain: bool = False
+    newline: str | None = None, retain: bool = False
 ) -> Splitter[str]:
     """
     .. versionadded:: 0.4.0
@@ -610,14 +610,14 @@ class NewlineStrs(Generic[AnyStr]):
 
     def search(
         self, data: AnyStr, closed: bool, pos: int = 0
-    ) -> Optional[tuple[int, int]]:
+    ) -> tuple[int, int] | None:
         m = self.regex.search(data, pos=pos)
         if m and not (m.group() == self.CR and m.end() == len(data) and not closed):
             return m.span()
         else:
             return None
 
-    def match(self, data: AnyStr, closed: bool, pos: int = 0) -> Optional[int]:
+    def match(self, data: AnyStr, closed: bool, pos: int = 0) -> int | None:
         # A return value of -1 means that that ``data[pos:] == CR`` and
         # `closed` is False
         m = self.regex.match(data, pos=pos)
@@ -628,7 +628,7 @@ class NewlineStrs(Generic[AnyStr]):
         else:
             return len(m.group())
 
-    def endmatch(self, data: AnyStr) -> Optional[int]:
+    def endmatch(self, data: AnyStr) -> int | None:
         if data.endswith(self.CRLF):
             return 2
         elif data.endswith((self.CR, self.LF)):
@@ -657,7 +657,7 @@ class SplitterState(Generic[AnyStr]):
     """
 
     items: list[AnyStr]
-    buff: Optional[AnyStr]
-    hold: Optional[AnyStr]
+    buff: AnyStr | None
+    hold: AnyStr | None
     closed: bool
     first: bool

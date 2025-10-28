@@ -2,8 +2,7 @@ from __future__ import annotations
 from collections.abc import Iterator
 from pathlib import Path
 import re
-import sys
-from typing import TYPE_CHECKING, AnyStr, IO, List, cast
+from typing import AnyStr, IO, Protocol
 import pytest
 from pytest_subtests import SubTests
 from linesep import (
@@ -15,28 +14,24 @@ from linesep import (
     split_terminated,
 )
 
-if TYPE_CHECKING:
-    if sys.version_info[:2] >= (3, 8):
-        from typing import Protocol
-    else:
-        from typing_extensions import Protocol
 
-    class Splitter(Protocol):
-        def __call__(
-            self,
-            s: AnyStr,
-            sep: AnyStr | re.Pattern[AnyStr],
-            retain: bool = False,
-        ) -> list[AnyStr]: ...
+class Splitter(Protocol):
+    def __call__(
+        self,
+        s: AnyStr,
+        sep: AnyStr | re.Pattern[AnyStr],
+        retain: bool = False,
+    ) -> list[AnyStr]: ...
 
-    class Reader(Protocol):
-        def __call__(
-            self,
-            fp: IO[AnyStr],
-            sep: AnyStr | re.Pattern[AnyStr],
-            retain: bool = False,
-            chunk_size: int = 512,
-        ) -> Iterator[AnyStr]: ...
+
+class Reader(Protocol):
+    def __call__(
+        self,
+        fp: IO[AnyStr],
+        sep: AnyStr | re.Pattern[AnyStr],
+        retain: bool = False,
+        chunk_size: int = 512,
+    ) -> Iterator[AnyStr]: ...
 
 
 SCENARIOS = {
@@ -331,8 +326,8 @@ SCENARIOS = {
         "preceded_retained": [*"This is test text.", ""],
         "terminated_retained": ["", *"This is test text."],
         "separated_retained": [""]
-        # We need to use typing.List here for pre-Python 3.9 compatibility:
-        + sum([["", c] for c in "This is test text."], cast(List[str], [])) + ["", ""],
+        + sum([["", c] for c in "This is test text."], [])
+        + ["", ""],
     },
 }
 
