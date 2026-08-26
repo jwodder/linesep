@@ -32,15 +32,28 @@ class Splitter(ABC, Generic[AnyStr]):
         self._closed: bool = False
         #: Whether we've handled the first split segment yet
         self._first: bool = True
+        #: How much of `_buff` has already been searched without finding a
+        #: separator
+        self._searched: int = 0
 
     @abstractmethod
-    def _find_separator(self, data: AnyStr) -> tuple[int, int] | None:
+    def _find_separator(self, data: AnyStr, pos: int = 0) -> tuple[int, int] | None:
         """
-        Find the first occurrence of a separator in ``data`` and return the
-        separator's starting and ending indices; if no separator is found,
-        return `None`.
+        Find the first occurrence of a separator in ``data`` at or after index
+        ``pos`` and return the separator's starting and ending indices; if no
+        separator is found, return `None`.
         """
         ...
+
+    @property
+    def _search_backtrack(self) -> int:
+        """
+        How far back from the end of the buffer a resumed search has to start
+        in order not to miss a separator straddling the boundary between the
+        data seen so far and the data yet to come; i.e. one less than the
+        maximum length of a separator.
+        """
+        return 1
 
     @abstractmethod
     def _handle_segment(
@@ -66,17 +79,22 @@ class Splitter(ABC, Generic[AnyStr]):
     def _split(self) -> None:
         """Split up the current contents of `_buff`"""
         while self._buff:
-            span = self._find_separator(self._buff)
+            span = self._find_separator(self._buff, self._searched)
             if span is None:
+                # Don't search this data again on the next `feed()`, except for
+                # the tail a separator could straddle.
+                self._searched = max(len(self._buff) - self._search_backtrack, 0)
                 break
             start, end = span
             self._handle_segment(self._buff[:start], first=self._first)
             self._first = False
             self._handle_separator(self._buff[start:end])
             self._buff = self._buff[end:]
+            self._searched = 0
         if self._closed and self._buff is not None:
             self._handle_segment(self._buff, first=self._first, last=True)
             self._buff = None
+            self._searched = 0
 
     def feed(self, data: AnyStr) -> None:
         """
@@ -88,10 +106,17 @@ class Splitter(ABC, Generic[AnyStr]):
         """
         if self._closed:
             raise SplitterClosedError("Cannot feed data to closed splitter")
-        if self._buff is None:
-            self._buff = data
+        buff = self._buff
+        if buff is None:
+            buff = data
         else:
-            self._buff += data
+            # Clearing the attribute first leaves `buff` as the only reference,
+            # which lets CPython grow the string in place instead of copying it
+            # on every call.  (On implementations that don't do that, this is
+            # merely equivalent to `self._buff += data`.)
+            self._buff = None
+            buff += data
+        self._buff = buff
         self._split()
 
     def get(self) -> AnyStr:
@@ -163,6 +188,7 @@ class Splitter(ABC, Generic[AnyStr]):
         self._hold = None
         self._closed = False
         self._first = True
+        self._searched = 0
 
     def getstate(self) -> SplitterState[AnyStr]:
         """Retrieve a representation of the splitter's current state"""
@@ -185,6 +211,7 @@ class Splitter(ABC, Generic[AnyStr]):
         self._hold = state.hold
         self._closed = state.closed
         self._first = state.first
+        self._searched = 0
 
     def itersplit(self, iterable: Iterable[AnyStr]) -> Iterator[AnyStr]:
         """
@@ -247,9 +274,13 @@ class ConstantSplitter(Splitter[AnyStr]):
         self._separator: AnyStr = separator
         self._retain: bool = retain
 
-    def _find_separator(self, data: AnyStr) -> tuple[int, int] | None:
+    @property
+    def _search_backtrack(self) -> int:
+        return len(self._separator) - 1
+
+    def _find_separator(self, data: AnyStr, pos: int = 0) -> tuple[int, int] | None:
         try:
-            i = data.index(self._separator)
+            i = data.index(self._separator, pos)
         except ValueError:
             return None
         else:
@@ -365,10 +396,10 @@ class UniversalNewlineSplitter(Splitter[AnyStr]):
         self._translate = translate
         self._strs: NewlineStrs[AnyStr] | None = None
 
-    def _find_separator(self, data: AnyStr) -> tuple[int, int] | None:
+    def _find_separator(self, data: AnyStr, pos: int = 0) -> tuple[int, int] | None:
         if self._strs is None:
             self._strs = NewlineStrs.for_type(data)
-        return self._strs.search(data, self.closed)
+        return self._strs.search(data, self.closed, pos=pos)
 
     def _handle_segment(
         self, item: AnyStr, first: bool = False, last: bool = False  # noqa: U100
@@ -415,8 +446,8 @@ class UnicodeNewlineSplitter(Splitter[str]):
         self._retain = retain
         self._translate = translate
 
-    def _find_separator(self, data: str) -> tuple[int, int] | None:
-        m = self.SEP_RGX.search(data)
+    def _find_separator(self, data: str, pos: int = 0) -> tuple[int, int] | None:
+        m = self.SEP_RGX.search(data, pos)
         if m and not (m.group() == "\r" and m.end() == len(data) and not self.closed):
             return m.span()
         else:
@@ -517,7 +548,9 @@ class ParagraphSplitter(Splitter[AnyStr]):
                 self._output(self._hold)
             self._buff = None
 
-    def _find_separator(self, data: AnyStr) -> tuple[int, int] | None:
+    def _find_separator(
+        self, data: AnyStr, pos: int = 0  # noqa: U100
+    ) -> tuple[int, int] | None:
         raise NotImplementedError("Not used by this subclass")  # pragma: no cover
 
     def _handle_segment(

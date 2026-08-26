@@ -2,6 +2,9 @@ v0.6.0 (in development)
 -----------------------
 - Support Python 3.14
 - Drop support for Python 3.8 and 3.9
+- `feed()` no longer re-searches or re-copies the buffered data on every call,
+  so splitting an item that spans many calls is now linear rather than
+  quadratic in the item's length
 
 v0.5.1 (2024-12-01)
 -------------------

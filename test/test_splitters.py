@@ -831,3 +831,27 @@ def test_paragraph_splitter(
             assert bsplitter.split(x.encode("utf-8")) == encode_list(y)
         bsplitter.close()
         assert bsplitter.getall() == encode_list(endput)
+
+
+class SearchCountingSplitter(TerminatedSplitter[str]):
+    """Records how many characters each search over the buffer covers"""
+
+    def __init__(self, separator: str) -> None:
+        super().__init__(separator)
+        self.searched = 0
+
+    def _find_separator(self, data: str, pos: int = 0) -> tuple[int, int] | None:
+        self.searched += len(data) - pos
+        return super()._find_separator(data, pos)
+
+
+def test_feed_does_not_research_buffer() -> None:
+    # An item split across many `feed()` calls used to have the whole buffer
+    # re-searched on each call, making the total work quadratic in its length.
+    chunks, size = 100, 1000
+    splitter = SearchCountingSplitter("\n")
+    for _ in range(chunks):
+        splitter.feed("x" * size)
+    splitter.feed("\n")
+    assert splitter.getall() == ["x" * (chunks * size)]
+    assert splitter.searched <= 2 * chunks * size
