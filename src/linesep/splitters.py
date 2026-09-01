@@ -97,7 +97,14 @@ class Splitter(ABC, Generic[AnyStr]):
         if self._buff is None:
             self._buff = data
         else:
-            self._buff += data
+            # This roundabout method of appending `data` to `self._buff`
+            # results in a speedup on CPython.  See
+            # <https://github.com/jwodder/linesep/pull/55#discussion_r3875399958>
+            # for more information.
+            s = self._buff
+            self._buff = None
+            s += data
+            self._buff = s
         self._split()
 
     def get(self) -> AnyStr:
