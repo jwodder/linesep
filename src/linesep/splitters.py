@@ -32,13 +32,16 @@ class Splitter(ABC, Generic[AnyStr]):
         self._closed: bool = False
         #: Whether we've handled the first split segment yet
         self._first: bool = True
+        #: The index of ``_buff`` at which to start the search for the next
+        #: separator
+        self._index: int = 0
 
     @abstractmethod
-    def _find_separator(self, data: AnyStr) -> tuple[int, int] | None:
+    def _find_separator(self, data: AnyStr, index: int) -> tuple[int, int] | int:
         """
-        Find the first occurrence of a separator in ``data`` and return the
-        separator's starting and ending indices; if no separator is found,
-        return `None`.
+        Find the first occurrence of a separator in ``data[index:]`` and return
+        the separator's starting and ending indices; if no separator is found,
+        return the index to start search from at subsequent calls.
         """
         ...
 
@@ -66,17 +69,20 @@ class Splitter(ABC, Generic[AnyStr]):
     def _split(self) -> None:
         """Split up the current contents of `_buff`"""
         while self._buff:
-            span = self._find_separator(self._buff)
-            if span is None:
+            span = self._find_separator(self._buff, self._index)
+            if isinstance(span, int):
+                self._index = span
                 break
             start, end = span
             self._handle_segment(self._buff[:start], first=self._first)
             self._first = False
             self._handle_separator(self._buff[start:end])
             self._buff = self._buff[end:]
+            self._index = 0
         if self._closed and self._buff is not None:
             self._handle_segment(self._buff, first=self._first, last=True)
             self._buff = None
+            self._index = 0
 
     def feed(self, data: AnyStr) -> None:
         """
@@ -91,7 +97,14 @@ class Splitter(ABC, Generic[AnyStr]):
         if self._buff is None:
             self._buff = data
         else:
-            self._buff += data
+            # This roundabout method of appending `data` to `self._buff`
+            # results in a speedup on CPython.  See
+            # <https://github.com/jwodder/linesep/pull/55#discussion_r3875399958>
+            # for more information.
+            s = self._buff
+            self._buff = None
+            s += data
+            self._buff = s
         self._split()
 
     def get(self) -> AnyStr:
@@ -163,6 +176,7 @@ class Splitter(ABC, Generic[AnyStr]):
         self._hold = None
         self._closed = False
         self._first = True
+        self._index = 0
 
     def getstate(self) -> SplitterState[AnyStr]:
         """Retrieve a representation of the splitter's current state"""
@@ -172,6 +186,7 @@ class Splitter(ABC, Generic[AnyStr]):
             hold=self._hold,
             closed=self._closed,
             first=self._first,
+            index=self._index,
         )
 
     def setstate(self, state: SplitterState[AnyStr]) -> None:
@@ -185,6 +200,7 @@ class Splitter(ABC, Generic[AnyStr]):
         self._hold = state.hold
         self._closed = state.closed
         self._first = state.first
+        self._index = state.index
 
     def itersplit(self, iterable: Iterable[AnyStr]) -> Iterator[AnyStr]:
         """
@@ -247,11 +263,14 @@ class ConstantSplitter(Splitter[AnyStr]):
         self._separator: AnyStr = separator
         self._retain: bool = retain
 
-    def _find_separator(self, data: AnyStr) -> tuple[int, int] | None:
+    def _find_separator(self, data: AnyStr, index: int) -> tuple[int, int] | int:
         try:
-            i = data.index(self._separator)
+            i = data.index(self._separator, index)
         except ValueError:
-            return None
+            if data:
+                return len(data) - len(self._separator) + 1
+            else:
+                return 0
         else:
             return (i, i + len(self._separator))
 
@@ -365,10 +384,15 @@ class UniversalNewlineSplitter(Splitter[AnyStr]):
         self._translate = translate
         self._strs: NewlineStrs[AnyStr] | None = None
 
-    def _find_separator(self, data: AnyStr) -> tuple[int, int] | None:
+    def _find_separator(self, data: AnyStr, index: int) -> tuple[int, int] | int:
         if self._strs is None:
             self._strs = NewlineStrs.for_type(data)
-        return self._strs.search(data, self.closed)
+        if (span := self._strs.search(data, self.closed, pos=index)) is not None:
+            return span
+        elif data:
+            return len(data) - 1
+        else:
+            return 0
 
     def _handle_segment(
         self, item: AnyStr, first: bool = False, last: bool = False  # noqa: U100
@@ -415,12 +439,15 @@ class UnicodeNewlineSplitter(Splitter[str]):
         self._retain = retain
         self._translate = translate
 
-    def _find_separator(self, data: str) -> tuple[int, int] | None:
-        m = self.SEP_RGX.search(data)
-        if m and not (m.group() == "\r" and m.end() == len(data) and not self.closed):
-            return m.span()
+    def _find_separator(self, data: str, index: int) -> tuple[int, int] | int:
+        m = self.SEP_RGX.search(data, pos=index)
+        if m:
+            if m.group() == "\r" and m.end() == len(data) and not self.closed:
+                return len(data) - 1
+            else:
+                return m.span()
         else:
-            return None
+            return len(data)
 
     def _handle_segment(
         self, item: str, first: bool = False, last: bool = False  # noqa: U100
@@ -467,12 +494,15 @@ class ParagraphSplitter(Splitter[AnyStr]):
     def _split(self) -> None:
         if self._strs is None and self._buff is not None:
             self._strs = NewlineStrs.for_type(self._buff)
-        pos = 0
         while self._buff:
             assert self._strs is not None
             if self._hold is None:
-                span = self._strs.search(self._buff, self.closed, pos=pos)
+                span = self._strs.search(self._buff, self.closed, pos=self._index)
                 if span is None:
+                    if self._buff:
+                        self._index = len(self._buff) - 1
+                    else:
+                        self._index = 0
                     break
                 start, end = span
                 if (self._first and start == 0) or self._strs.match(
@@ -486,13 +516,14 @@ class ParagraphSplitter(Splitter[AnyStr]):
                     self._handle_separator(self._buff[start:end])
                     self._first = False
                     self._buff = self._buff[end:]
+                    self._index = 0
                 else:
                     if self._translate and self._buff[start:end] != self._strs.LF:
                         self._buff = (
                             self._buff[:start] + self._strs.LF + self._buff[end:]
                         )
                         end = start + 1
-                    pos = end
+                    self._index = end
             else:
                 end2 = self._strs.match(self._buff, self.closed)
                 if end2 is None:
@@ -504,7 +535,7 @@ class ParagraphSplitter(Splitter[AnyStr]):
                 else:
                     self._handle_separator(self._buff[:end2])
                     self._buff = self._buff[end2:]
-                    pos = 0
+                    self._index = 0
         if self._closed and self._buff is not None:
             assert self._strs is not None
             if self._buff:
@@ -517,7 +548,7 @@ class ParagraphSplitter(Splitter[AnyStr]):
                 self._output(self._hold)
             self._buff = None
 
-    def _find_separator(self, data: AnyStr) -> tuple[int, int] | None:
+    def _find_separator(self, data: AnyStr, index: int) -> tuple[int, int] | int:
         raise NotImplementedError("Not used by this subclass")  # pragma: no cover
 
     def _handle_segment(
@@ -661,3 +692,4 @@ class SplitterState(Generic[AnyStr]):
     hold: AnyStr | None
     closed: bool
     first: bool
+    index: int
