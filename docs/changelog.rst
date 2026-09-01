@@ -3,8 +3,8 @@
 Changelog
 =========
 
-v0.5.2 (in development)
------------------------
+v0.5.2 (2026-09-01)
+-------------------
 - Support Python 3.14
 - Drop support for Python 3.8 and 3.9
 - Make splitter classes more efficient
